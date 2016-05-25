@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">FarmGame</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="title_activity_main_menu">MainMenuActivity</string>
+    <string name="title_activity_farm">FarmActivity</string>
+    <string name="title_activity_help">HelpActivity</string>
+    <string name="title_activity_high_score">HighScoreActivity</string>
+
+    <string name="silo_shop_button_text">Silo/Shop</string>
+    <string name="item_detail_title">Item Details:</string>
+    <string name="button_buy">Buy</string>
+    <string name="button_sell">Sell</string>
+
+    <string name="action_settings">Settings</string>
+    <string-array name="array_crops">
+        <item name="wheat">wheat</item>
+        <item name="corn">corn</item>
+        <item name="potato">potato</item>
+        <item name="strawberry">strawberry</item>
+        <item name="not_now">not now</item>
+    </string-array>
+    <string name="plant_a_seed">Plant a seed</string>
+    <string name="close_list">Close</string>
+    <integer name="cornMutureTime">6001</integer>
+    <integer name="wheatMutureTime">4001</integer>
+    <integer name="strawberryMutureTime">20001</integer>
+    <integer name="potatoMutureTime">10001</integer>
+
+
+</resources>
