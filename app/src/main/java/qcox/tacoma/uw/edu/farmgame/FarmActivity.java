@@ -1,5 +1,7 @@
 package qcox.tacoma.uw.edu.farmgame;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,6 +35,12 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
     BaseAdapterHelper_farmField mAdapter;
     Bundle myBundle;
     SQLiteFarmGame mySQLite;
+
+    //use to fix double click bug
+    int levleUpPosition;
+    View levelUpView;
+    AdapterView<?> levelUpParent;
+    long levelUpId;
 
 //    static int GameValues.getCurrentPlayerValues().getLevel() = 0;
 //    static int GameValues.getCurrentPlayerValues().getExp() = 0;
@@ -226,6 +234,10 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         mAdapter = (BaseAdapterHelper_farmField) parent.getAdapter();
         FieldPlantSeedListDialogFragment fieldPlantSeedListDialogFragment = new FieldPlantSeedListDialogFragment();
         myBundle.putInt("position", position);
+        levelUpView = view;
+        levelUpParent = parent;
+        levleUpPosition = position;
+        levelUpId = id;
         if (BaseAdapterHelper_farmField.field_arraylist.get(position).mutureTime < 0){
             Toast.makeText(getApplicationContext(), "You have harvested your crops", Toast.LENGTH_SHORT).show();
             mAdapter.field_arraylist.get(position).imageID = R.drawable.field_100dp;
@@ -479,6 +491,25 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
 //            expTextView.setText("Exp: "+ GameValues.getCurrentPlayerValues().getExp());
             mAdapter = new BaseAdapterHelper_farmField(getApplicationContext(),GameValues.getCurrentPlayerValues().getLevel() * Config.LEVELUPFIELDGAP + Config.INITIALFIELD);
 
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setMessage("Level Up! You earn an extra field! Congrat!")
+                    .create();
+            alert.setPositiveButton("Confirm", new DialogInterface.OnClickListener(){
+
+                /**
+                 * This method will be invoked when a button in the dialog is clicked.
+                 *
+                 * @param dialog The dialog that received the click.
+                 * @param which  The button that was clicked (e.g.
+                 *               {@link DialogInterface#BUTTON1}) or the position
+                 */
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    onItemClick(levelUpParent, levelUpView, levleUpPosition, levelUpId);
+                }
+            });
+            alert.setCancelable(false);
+            alert.show();
             Log.i("checkLvUp newAdapter" ,"test");
             levelUpNewAdapterAnimation();
             Log.i("checkLvUp Animation" ,"test");

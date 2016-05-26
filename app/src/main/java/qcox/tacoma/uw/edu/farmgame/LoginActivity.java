@@ -1,6 +1,10 @@
 package qcox.tacoma.uw.edu.farmgame;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +18,7 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String LOGIN_URL
             = "http://cssgate.insttech.washington.edu/~_450atm17/james.php?cmd=users";
     private Users mUsers;
+    private SharedPreferences mSharedPreferences;
 
     /**
      * create activity and perform log in function
@@ -42,68 +48,103 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
+        mSharedPreferences = getSharedPreferences(getString(R.string.LOGIN_PREFS), Context.MODE_PRIVATE);
+        Boolean loggedinBoolean = mSharedPreferences.getBoolean(getString(R.string.LOGGEDIN), false);
+
         final EditText editText_username = (EditText) findViewById(R.id.editText_username);
         final EditText editText_password = (EditText) findViewById(R.id.editText_password);
         final Button button_login = (Button) findViewById(R.id.button_login);
         final Button button_goToRegister = (Button) findViewById(R.id.button_goToRegister);
 
 
-        if (button_login != null) {
-            button_login.setOnClickListener(new View.OnClickListener() {
+        if (loggedinBoolean){
+            Intent intent = new Intent(this, FarmActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        else{
+            if (button_login != null) {
+                button_login.setOnClickListener(new View.OnClickListener() {
 
-                /**
-                 * restrict the user input. username has to be an email and password has to be at least 6 characters long
-                 * if the input is valid, start to download username and password
-                 * then check if it matched
-                 * @param v
-                 */
-                @Override
-                public void onClick(View v) {
-                    String username = editText_username.getText().toString();
-                    String password = editText_password.getText().toString();
-
-                    if (TextUtils.isEmpty(username))  {
-                        Toast.makeText(v.getContext(), "Enter username", Toast.LENGTH_SHORT).show();
-                        editText_username.requestFocus();
-                        return;
-                    }
-                    if (!username.contains("@") || !username.contains(".")) {
-                        Toast.makeText(v.getContext(), "Enter a valid email address", Toast.LENGTH_SHORT).show();
-                        editText_username.requestFocus();
-                        return;
-                    }
-
-                    if (TextUtils.isEmpty(password))  {
-                        Toast.makeText(v.getContext(), "Enter password", Toast.LENGTH_SHORT).show();
-                        editText_password.requestFocus();
-                        return;
-                    }
-                    if (password.length() < 6) {
-                        Toast.makeText(v.getContext(), "Enter password of at least 6 characters", Toast.LENGTH_SHORT).show();
-                        editText_password.requestFocus();
-                        return;
-                    }
-                    mUsers = new Users(username, password);
-                    new LoginTask().execute(new String[]{LOGIN_URL.toString()});
-
-                }
-            });
-
-            if (button_goToRegister != null) {
-                button_goToRegister.setOnClickListener(new View.OnClickListener() {
+                    /**
+                     * restrict the user input. username has to be an email and password has to be at least 6 characters long
+                     * if the input is valid, start to download username and password
+                     * then check if it matched
+                     * @param v
+                     */
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                        startActivity(intent);
-                        finish();
+                        String username = editText_username.getText().toString();
+                        String password = editText_password.getText().toString();
+
+                        if (TextUtils.isEmpty(username))  {
+                            Toast.makeText(v.getContext(), "Enter username", Toast.LENGTH_SHORT).show();
+                            editText_username.requestFocus();
+                            return;
+                        }
+                        if (!username.contains("@") || !username.contains(".")) {
+                            Toast.makeText(v.getContext(), "Enter a valid email address", Toast.LENGTH_SHORT).show();
+                            editText_username.requestFocus();
+                            return;
+                        }
+
+                        if (TextUtils.isEmpty(password))  {
+                            Toast.makeText(v.getContext(), "Enter password", Toast.LENGTH_SHORT).show();
+                            editText_password.requestFocus();
+                            return;
+                        }
+                        if (password.length() < 6) {
+                            Toast.makeText(v.getContext(), "Enter password of at least 6 characters", Toast.LENGTH_SHORT).show();
+                            editText_password.requestFocus();
+                            return;
+                        }
+                        mUsers = new Users(username, password);
+                        storeInSharedPreference(username, password);
+                        new LoginTask().execute(new String[]{LOGIN_URL.toString()});
 
                     }
                 });
+                if (button_goToRegister != null) {
+                    button_goToRegister.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
+                }
             }
-
         }
+    }
+    private void storeInSharedPreference(String username, String password) {
+//        ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+//
+//        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+//        if (networkInfo != null && networkInfo.isConnected()) {
+//            //Check if the login and password are valid
+//            //new LoginTask().execute(url);
 
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(openFileOutput(getString(R.string.LOGIN_FILE), Context.MODE_PRIVATE));
+            outputStreamWriter.write("email = " + username + ";");
+            outputStreamWriter.write("password = " + password);
+            outputStreamWriter.close();
+            Toast.makeText(this,"Stored in File Successfully!", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+////        } else {
+////            Toast.makeText(this, "No network connection available. Cannot authenticate user",
+////                    Toast.LENGTH_SHORT).show();
+////            return;
+//        }
 
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        String s = getString(R.string.LOGGEDIN);
+        editor.putBoolean(s, true);
+        editor.commit();
     }
     /**
      * inner class to perform downloading username and password
