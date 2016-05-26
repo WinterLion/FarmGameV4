@@ -38,5 +38,7 @@
     <integer name="strawberryMutureTime">20001</integer>
     <integer name="potatoMutureTime">10001</integer>
 
-
+    <string name="LOGIN_PREFS">farmgame.PREFS</string>
+    <string name="LOGGEDIN">loggedin</string>
+    <string name="LOGIN_FILE">farmgame.LOGIN_FILE</string>
 </resources>
