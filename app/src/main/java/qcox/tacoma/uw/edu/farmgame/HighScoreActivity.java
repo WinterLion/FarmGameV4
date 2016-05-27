@@ -1,11 +1,22 @@
 package qcox.tacoma.uw.edu.farmgame;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -41,10 +52,63 @@ public class HighScoreActivity extends AppCompatActivity implements HighScoreLis
                     .add(R.id.highScoreActivity_container, courseListFragment)
                     .commit();
         }
+//
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_highscore, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        //-------------------------------------------------------
+        int id = item.getItemId();
+
+        if (id == R.id.send_email_menu) {
+            //pop a dialog to ask receivers' email
+            AlertDialog.Builder alert = new AlertDialog.Builder(HighScoreActivity.this);
+            LayoutInflater inflater = getLayoutInflater();
+            alert.setMessage("You can share your game score to your friends")
+                    .create();
+            final View v = inflater.inflate(R.layout.dialog_sendemail,null);
+            alert.setView(v);
+            alert.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    EditText editText = (EditText) v.findViewById(R.id.send_email);
+                    String email = editText.getText().toString();
+                    Log.i("email is :  "+email, "email");
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setData(Uri.parse("mailto:"));
+                    String[] to = {email};
+                    intent.putExtra(Intent.EXTRA_EMAIL, to);
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Check Out This Farm Game");
+                    intent.putExtra(Intent.EXTRA_TEXT, "How are you my friend? Look how awesome I did in the farm game! I have earned xxx points!");
+                    intent.setType("message/rfc822");
+                    Intent chooser = Intent.createChooser(intent, "Send Email");
+                    startActivity(chooser);
+
+                }
+            });
+            alert.setNegativeButton("not now", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    });
+            alert.show();
+        }
+        return super.onOptionsItemSelected(item);
+        //-------------------------------------------------------
     }
 
     /**
