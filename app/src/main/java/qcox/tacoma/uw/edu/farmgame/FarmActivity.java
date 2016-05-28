@@ -37,18 +37,10 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
     SQLiteFarmGame mySQLite;
 
     //use to fix double click bug
-    int levleUpPosition;
+    int levelUpPosition;
     View levelUpView;
     AdapterView<?> levelUpParent;
     long levelUpId;
-
-//    static int GameValues.getCurrentPlayerValues().getLevel() = 0;
-//    static int GameValues.getCurrentPlayerValues().getExp() = 0;
-//    static int GameValues.getCurrentPlayerValues().getMoney() = Config.INITIALMONEY;
-//    static PlayerValues mPlayerValues;
-//    static Map<String, Integer> mInventory ;
-
-
 
     /**
      * {@inheritDoc}
@@ -58,10 +50,6 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_farm);
         myBundle = new Bundle();
-//        mInventory = new HashMap<>();
-//        GameValues.getCurrentPlayerValues().getLevel() = 0;
-//        GameValues.getCurrentPlayerValues().getExp() = 0;
-//        GameValues.getCurrentPlayerValues().getMoney() = Config.INITIALMONEY;
         mySQLite = new SQLiteFarmGame(this);
         getLatestPlayerValues();
     }
@@ -69,17 +57,28 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
     //this checks that the latest player values are loaded
     private void getLatestPlayerValues(){
         if (GameValues.mUsername == null) {
+            //used for testing
             GameValues.mUsername = "guest@guest.com";
+            String text = "Sign In failed using guest account";
+            Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
+            toast.show();
         }
 
+        getServerDatabasePlayerValues();
 
         if (GameValues.getCurrentPlayerValues() == null){
             PlayerValues theLocalValues = mySQLite.getLocalPlayerValues();
-            //PlayerValues theServerValues = getFromServerDatabase
+
             if (theLocalValues != null) {
                 GameValues.setCurrentPlayerValues(theLocalValues);
             } else {
-                GameValues.setCurrentPlayerValues(new PlayerValues(GameValues.mUsername));
+                if (GameValues.mServerPlayerValues != null){
+                    GameValues.setCurrentPlayerValues(GameValues.mServerPlayerValues);
+                } else {
+                    //both SQLite and mySQL don't have this user so create new one
+                    GameValues.setCurrentPlayerValues(new PlayerValues(GameValues.mUsername));
+                }
+
             }
             saveToSQLite();
         }
@@ -96,8 +95,6 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
                     .commit();
 
         }
-        PlayerValuesDB theTask = new PlayerValuesDB();
-        theTask.GetUserMoney(this);
     }
 
     /**
@@ -126,6 +123,29 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         transaction.commit();
     }
 
+    private void getServerDatabasePlayerValues(){
+        PlayerValuesDB theTask = new PlayerValuesDB();
+        theTask.UpdateUserMoney(this, GameValues.getCurrentPlayerValues().getMoney());
+    }
+
+    public void saveToServer(){
+
+    }
+
+    public void updateFromServer(){
+
+    }
+
+    public void updateMoneyToServer(){
+        PlayerValuesDB theTask = new PlayerValuesDB();
+        theTask.UpdateUserMoney(this, GameValues.getCurrentPlayerValues().getMoney());
+    }
+
+    public void updateMoneyFromServer(){
+        PlayerValuesDB theTask = new PlayerValuesDB();
+        theTask.GetUserMoney(this);
+    }
+
     /**
      * this is when an item has its buy button pressed.
      * @param v the view that called the method (the button)
@@ -146,8 +166,6 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         } else if (cost * numToBuy <= GameValues.getCurrentPlayerValues().getMoney()) {
             GameValues.getCurrentPlayerValues().addItemAmount(GameValues.getPlantItem(mPos).name, numToBuy);
             GameValues.getCurrentPlayerValues().setMoney(GameValues.getCurrentPlayerValues().getMoney() - cost * numToBuy);
-            PlayerValuesDB theTask = new PlayerValuesDB();
-            theTask.UpdateUserMoney(this, GameValues.getCurrentPlayerValues().getMoney());
             text = "You just bought " + numToBuy + " " + GameValues.getPlantItem(mPos).name
                     + " for " + cost * numToBuy + " coins.";
             saveToSQLite();
@@ -181,8 +199,6 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         } else if (numToSell <= currentAmount) {
             GameValues.getCurrentPlayerValues().setItemAmount(GameValues.getPlantItem(mPos).name, currentAmount - numToSell);
             GameValues.getCurrentPlayerValues().setMoney(GameValues.getCurrentPlayerValues().getMoney() + cost * numToSell);
-            PlayerValuesDB theTask = new PlayerValuesDB();
-            theTask.UpdateUserMoney(this, GameValues.getCurrentPlayerValues().getMoney());
             text = "You just sold " + numToSell + " " + GameValues.getPlantItem(mPos).name
                     + " for " + cost * numToSell + " coins.";
             saveToSQLite();
@@ -236,7 +252,7 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         myBundle.putInt("position", position);
         levelUpView = view;
         levelUpParent = parent;
-        levleUpPosition = position;
+        levelUpPosition = position;
         levelUpId = id;
         if (BaseAdapterHelper_farmField.field_arraylist.get(position).mutureTime < 0){
             Toast.makeText(getApplicationContext(), "You have harvested your crops", Toast.LENGTH_SHORT).show();
@@ -311,97 +327,6 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
             Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
             toast.show();
         }
-
-
-//
-//        if (seed.equals(Config.CORN)){
-//            int position = myBundle.getInt("position");
-//
-//            final Field field = (Field) mAdapter.field_arraylist.get(position);
-//            field.imageID = R.drawable.corn_100dp;
-//            field.mutureTime = Config.CORNMUTURETIME;
-//            field.typeOfCrops = Config.CORN;
-//            mAdapter.notifyDataSetChanged();
-//            final Handler handler = new Handler();
-//            final Runnable runnable = new Runnable() {
-//                @Override
-//                public void run() {
-//                    field.mutureTime -= 1000;
-//                    mAdapter.notifyDataSetChanged();
-//                    if (field.mutureTime > 0){
-//                        handler.postDelayed(this, 1000);
-//                    }
-//                    Log.i("1,mutureTime: "+field.mutureTime, "runnable");
-//                }
-//            };
-//            handler.postDelayed(runnable, 1000);
-//            Log.i("2,mutureTime: "+field.mutureTime, "runnable");
-//        }
-//
-//        if (seed.equals(Config.WHEAT)){
-//            final int position = myBundle.getInt("position");
-//            final Field field = (Field) mAdapter.field_arraylist.get(position);
-//            field.imageID = R.drawable.wheat_100dp;
-//            field.mutureTime = Config.WHEATMUTURETIME;
-//            field.typeOfCrops = Config.WHEAT;
-//            mAdapter.notifyDataSetChanged();
-//            final Handler handler = new Handler();
-//            final Runnable runnable = new Runnable() {
-//                @Override
-//                public void run() {
-//                    field.mutureTime -= 1000;
-//                    mAdapter.notifyDataSetChanged();
-//                    if (field.mutureTime > 0){
-//                        handler.postDelayed(this, 1000);
-//                    }
-//                    Log.i(position + ",muturePlantSeed: "+field.mutureTime, "runnable");
-//                }
-//            };
-//            handler.postDelayed(runnable, 1000);
-//
-//        }
-//        if (seed.equals(Config.STRAWBERRY)){
-//            int position = myBundle.getInt("position");
-//            final Field field = (Field) mAdapter.field_arraylist.get(position);
-//            field.imageID = R.drawable.strawberry_100dp;
-//            field.mutureTime = Config.STRAWBERRYMUTURETIME;
-//            field.typeOfCrops = Config.STRAWBERRY;
-//            mAdapter.notifyDataSetChanged();
-//            final Handler handler = new Handler();
-//            final Runnable runnable = new Runnable() {
-//                @Override
-//                public void run() {
-//                    field.mutureTime -= 1000;
-//                    mAdapter.notifyDataSetChanged();
-//                    if (field.mutureTime > 0){
-//                        handler.postDelayed(this, 1000);
-//                    }
-//                }
-//            };
-//            handler.postDelayed(runnable, 1000);
-//
-//        }
-//
-//        if (seed.equals(Config.POTATO)){
-//            int position = myBundle.getInt("position");
-//            final Field field = (Field) mAdapter.field_arraylist.get(position);
-//            field.imageID = R.drawable.potato_100dp;
-//            field.mutureTime = Config.POTATOMUTURETIME;
-//            field.typeOfCrops = Config.POTATO;
-//            mAdapter.notifyDataSetChanged();
-//            final Handler handler = new Handler();
-//            final Runnable runnable = new Runnable() {
-//                @Override
-//                public void run() {
-//                    field.mutureTime -= 1000;
-//                    mAdapter.notifyDataSetChanged();
-//                    if (field.mutureTime > 0){
-//                        handler.postDelayed(this, 1000);
-//                    }
-//                }
-//            };
-//            handler.postDelayed(runnable, 1000);
-//        }
     }
 
     public boolean updateMoneyExpHarvest(String typeOfCrops){
@@ -418,48 +343,6 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
             toast.show();
         }
         return checkLevelUp();
-//        switch (typeOfCrops){
-//            case Config.CORN:{
-//                Log.e("2,"+ typeOfCrops+ GameValues.getCurrentPlayerValues().getMoney() +","+ Config.CORNMONEY, "money");
-//                GameValues.getCurrentPlayerValues().addExp(Config.CORNEXP);
-//                GameValues.getCurrentPlayerValues().setMoney(GameValues.getCurrentPlayerValues().getMoney() + Config.CORNMONEY);
-//                Log.e("3,"+ typeOfCrops+GameValues.getCurrentPlayerValues().getMoney()+","+Config.CORNMONEY, "money");
-//                return checkLevelUp();
-////                Log.i("updateMoney "+typeOfCrops ,"test");
-////                break;
-//            }
-//            case Config.WHEAT:{
-//                Log.e("2,"+ typeOfCrops+GameValues.getCurrentPlayerValues().getMoney()+","+Config.CORNMONEY, "money");
-//                GameValues.getCurrentPlayerValues().addExp(Config.WHEATEXP);
-//                GameValues.getCurrentPlayerValues().getMoney() += Config.WHEATMONEY;
-//                Log.e("3,"+ typeOfCrops+GameValues.getCurrentPlayerValues().getMoney()+","+Config.CORNMONEY, "money");
-//                return checkLevelUp();
-////                Log.i("updateMoney "+typeOfCrops ,"test");
-////                break;
-//            }
-//            case Config.STRAWBERRY:{
-//                Log.e("2,"+ typeOfCrops+GameValues.getCurrentPlayerValues().getMoney()+","+Config.CORNMONEY, "money");
-//                GameValues.getCurrentPlayerValues().getExp() += Config.STRAWBERRYEXP;
-//                GameValues.getCurrentPlayerValues().getMoney() += Config.STRAWBERRYMONEY;
-//                Log.e("3,"+ typeOfCrops+GameValues.getCurrentPlayerValues().getMoney()+","+Config.CORNMONEY, "money");
-//                return checkLevelUp();
-////                Log.i("updateMoney "+typeOfCrops ,"test");
-////                break;
-//            }
-//            case Config.POTATO:{
-//                Log.e("2,"+ typeOfCrops+GameValues.getCurrentPlayerValues().getMoney()+","+Config.CORNMONEY, "money");
-//                GameValues.getCurrentPlayerValues().getExp() += Config.POTATOEXP;
-//                GameValues.getCurrentPlayerValues().getMoney() += Config.POTATOMONEY;
-//                Log.e("3,"+ typeOfCrops+GameValues.getCurrentPlayerValues().getMoney()+","+Config.CORNMONEY, "money");
-//                return checkLevelUp();
-////                Log.i("updateMoney "+typeOfCrops ,"test");
-////                break;
-//            }
-//            default:
-//                Log.i("updateMoney default"+typeOfCrops ,"test");
-//                return checkLevelUp();
-////                break;
-//        }
     }
 
     private void updateTop(){
@@ -505,7 +388,7 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
                  */
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    onItemClick(levelUpParent, levelUpView, levleUpPosition, levelUpId);
+                    onItemClick(levelUpParent, levelUpView, levelUpPosition, levelUpId);
                 }
             });
             alert.setCancelable(false);

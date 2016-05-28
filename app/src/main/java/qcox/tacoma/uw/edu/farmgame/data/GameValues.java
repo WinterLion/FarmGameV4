@@ -20,6 +20,8 @@ public class GameValues {
 
     public static PlayerValues mCurrentPlayerValues;
 
+    public static PlayerValues mServerPlayerValues;
+
     public static PlayerValues getCurrentPlayerValues() {
         return mCurrentPlayerValues;
     }

@@ -22,14 +22,11 @@ public class SQLiteFarmGame {
     private static final String INVENTORY_TABLE = "PlayerInventory";
 
     private GameStateDBHelper mGameStateDBHelper;
-   // private PlayerInventoryDBHelper mPlayerInventoryDBHelper;
     private SQLiteDatabase mSQLiteDatabase;
 
     public SQLiteFarmGame(Context context) {
         mGameStateDBHelper = new GameStateDBHelper(
                 context, DB_NAME, null, DB_VERSION);
-//        mPlayerInventoryDBHelper= new PlayerInventoryDBHelper(
-//                context, DB_NAME, null, DB_VERSION);
         mSQLiteDatabase = mGameStateDBHelper.getWritableDatabase();
     }
 
@@ -47,13 +44,6 @@ public class SQLiteFarmGame {
         //long rowId = mSQLiteDatabase.insert(GAME_STATE_TABLE, null, contentValues);
         long rowId = mSQLiteDatabase.replace(GAME_STATE_TABLE, null, contentValues);
         boolean answer = rowId != -1;
-
-//        Iterator it = thePlayerValues.getItemMap().entrySet().iterator();
-//        while (it.hasNext()) {
-//            Map.Entry pair = (Map.Entry)it.next();
-//            System.out.println(pair.getKey() + " = " + pair.getValue());
-//            it.remove(); // avoids a ConcurrentModificationException
-//        }
 
         Iterator iterator = thePlayerValues.getItemMap().entrySet().iterator();
         while (iterator.hasNext()) {
@@ -90,12 +80,13 @@ public class SQLiteFarmGame {
         int level;
         int exp;
         Map<String, Integer> ItemMap = new HashMap<>();
-        String[] Where = {"username = " + GameValues.mUsername};
+        String WhereColumns = "username=?";
+        String[] WhereValues = {GameValues.mUsername};
         Cursor cursor = mSQLiteDatabase.query(
                 GAME_STATE_TABLE,  // The table to query
                 columns,                               // The columns to return
-                null,                                // The columns for the WHERE clause
-                null,                            // The values for the WHERE clause
+                WhereColumns,                                // The columns for the WHERE clause
+                WhereValues,                            // The values for the WHERE clause
                 null,                                     // don't group the rows
                 null,                                     // don't filter by row groups
                 null                                 // The sort order
@@ -114,8 +105,8 @@ public class SQLiteFarmGame {
             cursor = mSQLiteDatabase.query(
                     INVENTORY_TABLE,  // The table to query
                     columns2,                               // The columns to return
-                    null,                                // The columns for the WHERE clause
-                    null,                            // The values for the WHERE clause
+                    WhereColumns,                                // The columns for the WHERE clause
+                    WhereValues,                            // The values for the WHERE clause
                     null,                                     // don't group the rows
                     null,                                     // don't filter by row groups
                     null                                 // The sort order
@@ -137,8 +128,10 @@ public class SQLiteFarmGame {
      * Delete all the data from the GAME_STATE_TABLE
      */
     public void deleteGameState() {
-        mSQLiteDatabase.delete(GAME_STATE_TABLE, null, null);
-        mSQLiteDatabase.delete(INVENTORY_TABLE, null, null);
+        String WhereColumns = "username=?";
+        String[] WhereValues = {GameValues.mUsername};
+        mSQLiteDatabase.delete(GAME_STATE_TABLE, WhereColumns, WhereValues);
+        mSQLiteDatabase.delete(INVENTORY_TABLE, WhereColumns, WhereValues);
     }
 
 
@@ -179,29 +172,4 @@ public class SQLiteFarmGame {
             onCreate(sqLiteDatabase);
         }
     }
-
-//    class PlayerInventoryDBHelper extends SQLiteOpenHelper {
-//
-//        private static final String CREATE_INVENTORY_TABLE_SQL =
-//                "CREATE TABLE IF NOT EXISTS " + INVENTORY_TABLE
-//                        + "(id int NOT NULL AUTO_INCREMENT PRIMARY KEY, item_name TEXT, item_amount INT)";
-//
-//        private static final String DROP_INVENTORY_TABLE_SQL =
-//                "DROP TABLE IF EXISTS " + INVENTORY_TABLE;
-//
-//        public PlayerInventoryDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-//            super(context, name, factory, version);
-//        }
-//
-//        @Override
-//        public void onCreate(SQLiteDatabase sqLiteDatabase) {
-//            sqLiteDatabase.execSQL(CREATE_INVENTORY_TABLE_SQL);
-//        }
-//
-//        @Override
-//        public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-//            sqLiteDatabase.execSQL(DROP_INVENTORY_TABLE_SQL);
-//            onCreate(sqLiteDatabase);
-//        }
-//    }
 }
