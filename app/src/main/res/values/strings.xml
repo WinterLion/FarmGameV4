@@ -41,4 +41,10 @@
     <string name="LOGIN_PREFS">farmgame.PREFS</string>
     <string name="LOGGEDIN">loggedin</string>
     <string name="LOGIN_FILE">farmgame.LOGIN_FILE</string>
+    <string name="action_logout">loggedout</string>
+    <string name="facebook_app_id">1605744539743264</string>
+    <string name="send_email">email friends</string>
+    <string name="pleaseEnterAnEmail">Please enter an email to share your high score:</string>
+    <string name="emailExample">example@uw.edu</string>
+
 </resources>
