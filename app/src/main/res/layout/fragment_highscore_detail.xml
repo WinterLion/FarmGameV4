@@ -6,13 +6,46 @@
     tools:context=".HighscoreDetailFragment">
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/highScoreFragment_username" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Username:"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="40dp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/highScoreFragment_highscore" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="highScoreFragment_username"
+        android:id="@+id/highScoreFragment_username"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="High Score:"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="20dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="highScoreFragment_highscore"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/highScoreFragment_highscore"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Hint: HighScore = Level x 1000 + Money x 50 + Exp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="40dp" />
 
 </LinearLayout>
