@@ -12,7 +12,7 @@ public class Config {
     final public static int INITIAL_EXPERIENCE = 0; //initial experience the player has
     final public static int INITIAL_LEVEL = 0; //initial level the player has
     final public static int INITIAL_SCORE = 0; //initial level the player has
-    
+
 
     final public static int INITIAL_FIELD = 10;//initial field the player has
     final public static int LEVELUP_FIELD_GAP = 1;//number of field player get reward when level up

@@ -44,7 +44,7 @@
     <string name="action_logout">log out</string>
     <string name="facebook_app_id">1605744539743264</string>
     <string name="send_email">email friends</string>
-    <string name="pleaseEnterAnEmail">Please enter your friend's email to share your high score:</string>
+    <string name="pleaseEnterAnEmail">Please enter your friend\'s email to share your high score:</string>
     <string name="emailExample">example@uw.edu</string>
 
 </resources>

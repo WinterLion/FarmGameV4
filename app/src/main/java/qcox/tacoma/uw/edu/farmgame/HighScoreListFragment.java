@@ -45,14 +45,14 @@ public class HighScoreListFragment extends Fragment {
     public HighScoreListFragment() {
     }
 
-    @SuppressWarnings("unused")
-    public static HighScoreListFragment newInstance(int columnCount) {
-        HighScoreListFragment fragment = new HighScoreListFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    @SuppressWarnings("unused")
+//    public static HighScoreListFragment newInstance(int columnCount) {
+//        HighScoreListFragment fragment = new HighScoreListFragment();
+//        Bundle args = new Bundle();
+//        args.putInt(ARG_COLUMN_COUNT, columnCount);
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
     /**
      * {@inheritDoc}
@@ -90,10 +90,8 @@ public class HighScoreListFragment extends Fragment {
             }
 
         }
-
         DownloadHighscoreTask task = new DownloadHighscoreTask();
         task.execute(new String[]{HIGHSCORE_URL});
-
         return view;
     }
 
@@ -133,7 +131,6 @@ public class HighScoreListFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument typeOfCrops and name
         void onListFragmentInteraction(HighScore item);
 
     }

@@ -22,6 +22,8 @@ public class HighscoreDetailFragment extends Fragment {
 
     private TextView mUsernameTextView;
     private TextView mHighScoreTextView;
+//    private TextView mLevelTextView;
+//    private TextView mMoneyTextView;
     public static String HIGHSCORE_ITEM_SELECTED = "highScoreItemSelected";
 
     /**
@@ -45,6 +47,8 @@ public class HighscoreDetailFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_highscore_detail, container, false);
         mUsernameTextView = (TextView) view.findViewById(R.id.highScoreFragment_username);
         mHighScoreTextView = (TextView) view.findViewById(R.id.highScoreFragment_highscore);
+//        mLevelTextView = (TextView) view.findViewById(R.id.highScoreFragment_level);
+//        mMoneyTextView = (TextView) view.findViewById(R.id.highScoreFragment_money);
 
         return view;
     }
@@ -57,6 +61,7 @@ public class HighscoreDetailFragment extends Fragment {
         if (highScore != null) {
             mUsernameTextView.setText(highScore.getUsername());
             mHighScoreTextView.setText(highScore.getHighscore());
+
         }
     }
 
