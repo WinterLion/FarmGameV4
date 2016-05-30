@@ -147,7 +147,7 @@ public class RegisterActivity extends AppCompatActivity {
             HttpURLConnection urlConnection = null;
             for (String url : urls) {
                 try {
-                    Log.i("111 String URL is: ",url);
+                    Log.i("URL is: "+url, "URL");
                     URL urlObject = new URL(url);
                     urlConnection = (HttpURLConnection) urlObject.openConnection();
 

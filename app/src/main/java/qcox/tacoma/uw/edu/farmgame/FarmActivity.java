@@ -6,11 +6,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,10 +22,23 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+
 import qcox.tacoma.uw.edu.farmgame.data.GameValues;
 import qcox.tacoma.uw.edu.farmgame.data.PlayerValues;
 import qcox.tacoma.uw.edu.farmgame.data.PlayerValuesDB;
 import qcox.tacoma.uw.edu.farmgame.data.SQLiteFarmGame;
+import qcox.tacoma.uw.edu.farmgame.highscore.HighScore;
 
 /**
  * This class is the major activity in the project.
@@ -33,12 +49,15 @@ import qcox.tacoma.uw.edu.farmgame.data.SQLiteFarmGame;
  */
 public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFragmentInteractionListener,
         ItemListFragment.OnListFragmentInteractionListener, AdapterView.OnItemClickListener,
-        Communicater{
+        Communicater, HighScoreListFragment.OnListFragmentInteractionListener{
 
+    private final static String ADD_HIGHSCORE_URL
+            = "http://cssgate.insttech.washington.edu/~_450atm17/addHighScore.php?";
     int mPos;
-    BaseAdapterHelper_farmField mAdapter;
+    public static BaseAdapterHelper_farmField mAdapter;
     Bundle myBundle;
     SQLiteFarmGame mySQLite;
+    ArrayList<Field> mFieldList;
 
     //use to fix double click bug
     int levleUpPosition;
@@ -54,6 +73,11 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
 
 
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        savedInstanceState.putParcelableArrayList("field_arraylist", BaseAdapterHelper_farmField.field_arraylist);
+        super.onSaveInstanceState(savedInstanceState);
+    }
     /**
      * {@inheritDoc}
      */
@@ -61,6 +85,14 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_farm);
+        if (savedInstanceState == null){
+            BaseAdapterHelper_farmField.field_arraylist = new ArrayList<>();
+            Log.i("lifecycle onCreate:", "save: null");
+        }else{
+            BaseAdapterHelper_farmField.field_arraylist = savedInstanceState.getParcelableArrayList("field_arraylist");
+            Log.i("lifecycle onCreate:", "save: not null");
+        }
+
         myBundle = new Bundle();
 //        mInventory = new HashMap<>();
 //        GameValues.getCurrentPlayerValues().getLevel() = 0;
@@ -69,6 +101,19 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         mySQLite = new SQLiteFarmGame(this);
         getLatestPlayerValues();
     }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState == null){
+            BaseAdapterHelper_farmField.field_arraylist = new ArrayList<>();
+            Log.i("lifecycle onRestore:", "save: null");
+        }else{
+            BaseAdapterHelper_farmField.field_arraylist = savedInstanceState.getParcelableArrayList("field_arraylist");
+            Log.i("lifecycle onRestore:", "save: not null");
+        }
+    }
+
 
     //this checks that the latest player values are loaded
     private void getLatestPlayerValues(){
@@ -115,6 +160,40 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
             finish();
             return true;
         }
+
+        if (id == R.id.send_email_menu) {
+            //pop a dialog to ask receivers' email
+            AlertDialog.Builder alert = new AlertDialog.Builder(FarmActivity.this);
+            LayoutInflater inflater = getLayoutInflater();
+            alert.setMessage("You can share your game score to your friends")
+                    .create();
+            final View v = inflater.inflate(R.layout.dialog_sendemail,null);
+            alert.setView(v);
+            alert.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    EditText editText = (EditText) v.findViewById(R.id.send_email);
+                    String email = editText.getText().toString();
+                    //send email
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setData(Uri.parse("mailto:"));
+                    String[] to = {email};
+                    intent.putExtra(Intent.EXTRA_EMAIL, to);
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Check Out This Farm Game");
+                    intent.putExtra(Intent.EXTRA_TEXT, "How are you my friend? Look how awesome I did in the farm game! I have earned xxx points!");
+                    intent.setType("message/rfc822");
+                    Intent chooser = Intent.createChooser(intent, "Send Email");
+                    startActivity(chooser);
+
+                }
+            });
+            alert.setNegativeButton("not now", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                }
+            });
+            alert.show();
+        }
         return super.onOptionsItemSelected(item);
         //-------------------------------------------------------
     }
@@ -123,10 +202,12 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
 
     @Override
     public void onStart(){
+        Log.i("lifecycle onStart:", "onStart");
         super.onStart();
         if (findViewById(R.id.fragment_container)!= null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new FarmFragment())
+                    .addToBackStack(null)
                     .commit();
 
         }
@@ -139,9 +220,20 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
      * @param v the view that called the method (the button)
      */
     public void viewHighScores(View v) {
-        Intent intent = new Intent(getApplicationContext(), HighScoreActivity.class);
-        startActivity(intent);
+        addHighScore(buildHighScoreURL());
+        HighScoreListFragment itemFragment = new HighScoreListFragment();
+        Bundle args = new Bundle();
+        itemFragment.setArguments(args);
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, itemFragment)
+                .addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
     }
+
+
 
     /**
      * this starts the itemFragment which contains a list of items and how much the player has.
@@ -308,7 +400,6 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
             final Field field = (Field) mAdapter.field_arraylist.get(position);
             int imageResourceIndex = -1;
             String imageName = GameValues.getPlantItem(seed).imageName + "_100dp";
-            //resource used: http://stackoverflow.com/questions/4427608/android-getting-resource-id-from-string
             try {
                 java.lang.reflect.Field idField = R.drawable.class.getDeclaredField(imageName);
                 imageResourceIndex = idField.getInt(idField);
@@ -345,97 +436,6 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
             Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
             toast.show();
         }
-
-
-//
-//        if (seed.equals(Config.CORN)){
-//            int position = myBundle.getInt("position");
-//
-//            final Field field = (Field) mAdapter.field_arraylist.get(position);
-//            field.imageID = R.drawable.corn_100dp;
-//            field.mutureTime = Config.CORNMUTURETIME;
-//            field.typeOfCrops = Config.CORN;
-//            mAdapter.notifyDataSetChanged();
-//            final Handler handler = new Handler();
-//            final Runnable runnable = new Runnable() {
-//                @Override
-//                public void run() {
-//                    field.mutureTime -= 1000;
-//                    mAdapter.notifyDataSetChanged();
-//                    if (field.mutureTime > 0){
-//                        handler.postDelayed(this, 1000);
-//                    }
-//                    Log.i("1,mutureTime: "+field.mutureTime, "runnable");
-//                }
-//            };
-//            handler.postDelayed(runnable, 1000);
-//            Log.i("2,mutureTime: "+field.mutureTime, "runnable");
-//        }
-//
-//        if (seed.equals(Config.WHEAT)){
-//            final int position = myBundle.getInt("position");
-//            final Field field = (Field) mAdapter.field_arraylist.get(position);
-//            field.imageID = R.drawable.wheat_100dp;
-//            field.mutureTime = Config.WHEATMUTURETIME;
-//            field.typeOfCrops = Config.WHEAT;
-//            mAdapter.notifyDataSetChanged();
-//            final Handler handler = new Handler();
-//            final Runnable runnable = new Runnable() {
-//                @Override
-//                public void run() {
-//                    field.mutureTime -= 1000;
-//                    mAdapter.notifyDataSetChanged();
-//                    if (field.mutureTime > 0){
-//                        handler.postDelayed(this, 1000);
-//                    }
-//                    Log.i(position + ",muturePlantSeed: "+field.mutureTime, "runnable");
-//                }
-//            };
-//            handler.postDelayed(runnable, 1000);
-//
-//        }
-//        if (seed.equals(Config.STRAWBERRY)){
-//            int position = myBundle.getInt("position");
-//            final Field field = (Field) mAdapter.field_arraylist.get(position);
-//            field.imageID = R.drawable.strawberry_100dp;
-//            field.mutureTime = Config.STRAWBERRYMUTURETIME;
-//            field.typeOfCrops = Config.STRAWBERRY;
-//            mAdapter.notifyDataSetChanged();
-//            final Handler handler = new Handler();
-//            final Runnable runnable = new Runnable() {
-//                @Override
-//                public void run() {
-//                    field.mutureTime -= 1000;
-//                    mAdapter.notifyDataSetChanged();
-//                    if (field.mutureTime > 0){
-//                        handler.postDelayed(this, 1000);
-//                    }
-//                }
-//            };
-//            handler.postDelayed(runnable, 1000);
-//
-//        }
-//
-//        if (seed.equals(Config.POTATO)){
-//            int position = myBundle.getInt("position");
-//            final Field field = (Field) mAdapter.field_arraylist.get(position);
-//            field.imageID = R.drawable.potato_100dp;
-//            field.mutureTime = Config.POTATOMUTURETIME;
-//            field.typeOfCrops = Config.POTATO;
-//            mAdapter.notifyDataSetChanged();
-//            final Handler handler = new Handler();
-//            final Runnable runnable = new Runnable() {
-//                @Override
-//                public void run() {
-//                    field.mutureTime -= 1000;
-//                    mAdapter.notifyDataSetChanged();
-//                    if (field.mutureTime > 0){
-//                        handler.postDelayed(this, 1000);
-//                    }
-//                }
-//            };
-//            handler.postDelayed(runnable, 1000);
-//        }
     }
 
     public boolean updateMoneyExpHarvest(String typeOfCrops){
@@ -452,48 +452,6 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
             toast.show();
         }
         return checkLevelUp();
-//        switch (typeOfCrops){
-//            case Config.CORN:{
-//                Log.e("2,"+ typeOfCrops+ GameValues.getCurrentPlayerValues().getMoney() +","+ Config.CORNMONEY, "money");
-//                GameValues.getCurrentPlayerValues().addExp(Config.CORNEXP);
-//                GameValues.getCurrentPlayerValues().setMoney(GameValues.getCurrentPlayerValues().getMoney() + Config.CORNMONEY);
-//                Log.e("3,"+ typeOfCrops+GameValues.getCurrentPlayerValues().getMoney()+","+Config.CORNMONEY, "money");
-//                return checkLevelUp();
-////                Log.i("updateMoney "+typeOfCrops ,"test");
-////                break;
-//            }
-//            case Config.WHEAT:{
-//                Log.e("2,"+ typeOfCrops+GameValues.getCurrentPlayerValues().getMoney()+","+Config.CORNMONEY, "money");
-//                GameValues.getCurrentPlayerValues().addExp(Config.WHEATEXP);
-//                GameValues.getCurrentPlayerValues().getMoney() += Config.WHEATMONEY;
-//                Log.e("3,"+ typeOfCrops+GameValues.getCurrentPlayerValues().getMoney()+","+Config.CORNMONEY, "money");
-//                return checkLevelUp();
-////                Log.i("updateMoney "+typeOfCrops ,"test");
-////                break;
-//            }
-//            case Config.STRAWBERRY:{
-//                Log.e("2,"+ typeOfCrops+GameValues.getCurrentPlayerValues().getMoney()+","+Config.CORNMONEY, "money");
-//                GameValues.getCurrentPlayerValues().getExp() += Config.STRAWBERRYEXP;
-//                GameValues.getCurrentPlayerValues().getMoney() += Config.STRAWBERRYMONEY;
-//                Log.e("3,"+ typeOfCrops+GameValues.getCurrentPlayerValues().getMoney()+","+Config.CORNMONEY, "money");
-//                return checkLevelUp();
-////                Log.i("updateMoney "+typeOfCrops ,"test");
-////                break;
-//            }
-//            case Config.POTATO:{
-//                Log.e("2,"+ typeOfCrops+GameValues.getCurrentPlayerValues().getMoney()+","+Config.CORNMONEY, "money");
-//                GameValues.getCurrentPlayerValues().getExp() += Config.POTATOEXP;
-//                GameValues.getCurrentPlayerValues().getMoney() += Config.POTATOMONEY;
-//                Log.e("3,"+ typeOfCrops+GameValues.getCurrentPlayerValues().getMoney()+","+Config.CORNMONEY, "money");
-//                return checkLevelUp();
-////                Log.i("updateMoney "+typeOfCrops ,"test");
-////                break;
-//            }
-//            default:
-//                Log.i("updateMoney default"+typeOfCrops ,"test");
-//                return checkLevelUp();
-////                break;
-//        }
     }
 
     private void updateTop(){
@@ -592,84 +550,157 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
                 };
                 handler.postDelayed(runnable, 1000);
             }
-
-
-//            if (seed.equals(Config.CORN)){
-//                field.imageID = R.drawable.corn_100dp;
-//                field.typeOfCrops = Config.CORN;
-//                mAdapter.notifyDataSetChanged();
-//                final Handler handler = new Handler();
-//                final Runnable runnable = new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        field.mutureTime -= 1000;
-//                        mAdapter.notifyDataSetChanged();
-//                        if (field.mutureTime > 0){
-//                            handler.postDelayed(this, 1000);
-//                        }
-//                        Log.i("1,mutureTime: "+field.mutureTime, "runnable");
-//                    }
-//                };
-//                handler.postDelayed(runnable, 1000);
-//            }
-//
-//            if (seed.equals(Config.WHEAT)){
-//                field.imageID = R.drawable.wheat_100dp;
-//                field.typeOfCrops = Config.WHEAT;
-//                mAdapter.notifyDataSetChanged();
-//                final Handler handler = new Handler();
-//                final Runnable runnable = new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        field.mutureTime -= 1000;
-//                        mAdapter.notifyDataSetChanged();
-//                        if (field.mutureTime > 0){
-//                            handler.postDelayed(this, 1000);
-//                        }
-//                    }
-//                };
-//                handler.postDelayed(runnable, 1000);
-//
-//            }
-//            if (seed.equals(Config.STRAWBERRY)){
-//                field.imageID = R.drawable.strawberry_100dp;
-//                field.typeOfCrops = Config.STRAWBERRY;
-//                mAdapter.notifyDataSetChanged();
-//                final Handler handler = new Handler();
-//                final Runnable runnable = new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        field.mutureTime -= 1000;
-//                        mAdapter.notifyDataSetChanged();
-//                        if (field.mutureTime > 0){
-//                            handler.postDelayed(this, 1000);
-//                        }
-//                    }
-//                };
-//                handler.postDelayed(runnable, 1000);
-//
-//            }
-//
-//            if (seed.equals(Config.POTATO)){
-//                field.imageID = R.drawable.potato_100dp;
-//                field.typeOfCrops = Config.POTATO;
-//                mAdapter.notifyDataSetChanged();
-//                final Handler handler = new Handler();
-//                final Runnable runnable = new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        field.mutureTime -= 1000;
-//                        mAdapter.notifyDataSetChanged();
-//                        if (field.mutureTime > 0){
-//                            handler.postDelayed(this, 1000);
-//                        }
-//                    }
-//                };
-//                handler.postDelayed(runnable, 1000);
-//            }
         }
 
     }
 
 
+    /**
+     * happened when the one of the listfragment is clicked.
+     * add that specific fragment detail to activity.
+     * @param item
+     */
+    @Override
+    public void onListFragmentInteraction(HighScore item) {
+        HighscoreDetailFragment highscoreDetailFragment = new HighscoreDetailFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(HighscoreDetailFragment.HIGHSCORE_ITEM_SELECTED, item);
+        highscoreDetailFragment.setArguments(args);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, highscoreDetailFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public int calculateHighScore(){
+        int money = GameValues.getCurrentPlayerValues().getMoney();
+        int level = GameValues.getCurrentPlayerValues().getLevel();
+        int exp = GameValues.getCurrentPlayerValues().getExp();
+        int highScore = level * 1000 + exp + money * 50;
+        return highScore;
+    }
+    private String buildHighScoreURL() {
+        StringBuilder sb = new StringBuilder(ADD_HIGHSCORE_URL);
+        try {
+            String username = GameValues.getCurrentPlayerValues().getUserName();
+            sb.append("username=");
+            sb.append(URLEncoder.encode(username, "UTF-8"));
+
+            int highscore = calculateHighScore();
+            sb.append("&highscore=");
+            sb.append(highscore);
+
+            Log.i("addHighScore", sb.toString());
+        }
+        catch(Exception e) {
+            Toast.makeText(getApplicationContext(), "addHighScore wrong with the url" + e.getMessage(), Toast.LENGTH_LONG)
+                    .show();
+        }
+        return sb.toString();
+    }
+
+    private class AddHighScoreTask extends AsyncTask<String, Void, String> {
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            String response = "";
+            HttpURLConnection urlConnection = null;
+            for (String url : urls) {
+                try {
+                    Log.i("123 String URL is: ",url);
+                    URL urlObject = new URL(url);
+                    urlConnection = (HttpURLConnection) urlObject.openConnection();
+
+                    InputStream content = urlConnection.getInputStream();
+
+                    BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
+                    String s = "";
+                    while ((s = buffer.readLine()) != null) {
+                        response += s;
+                        Log.i("123 String response: ",response);
+                    }
+
+                } catch (Exception e) {
+                    response = "Unable to add highScore, Reason: "
+                            + e.getMessage();
+                } finally {
+                    if (urlConnection != null)
+                        urlConnection.disconnect();
+                }
+            }
+            return response;
+        }
+
+
+        /**
+         * It checks to see if there was a problem with the URL(Network) which is when an
+         * exception is caught. It tries to call the parse Method and checks to see if it was successful.
+         * If not, it displays the exception.
+         *
+         * @param result
+         */
+        @Override
+        protected void onPostExecute(String result) {
+            // Something wrong with the network or the URL.
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                String status = (String) jsonObject.get("result");
+                if (status.equals("success")) {
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Failed to add: "
+                                    + jsonObject.get("error")
+                            , Toast.LENGTH_LONG)
+                            .show();
+                }
+            } catch (JSONException e) {
+                Toast.makeText(getApplicationContext(), "Something wrong with the data" +
+                        e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    public void addHighScore(String url){
+        AddHighScoreTask task = new AddHighScoreTask();
+        task.execute(new String[]{url.toString()});
+    }
+
+    @Override
+    protected void onStop() {
+        Log.i("lifecycle onStop:", "onStop");
+        super.onStop();
+    }
+    @Override
+    protected void onDestroy() {
+        Log.i("lifecycle onDestroy:", "onDestroy");
+        super.onDestroy();
+    }
+    @Override
+    protected void onPause() {
+        Log.i("lifecycle onPause:", "onPause");
+        super.onPause();
+    }
+    @Override
+    protected void onResume() {
+        Log.i("lifecycle onResume:", "onResume");
+        super.onResume();
+    }
+    @Override
+    protected void onRestart() {
+        Log.i("lifecycle onRestart:", "onRestart");
+        super.onRestart();
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        Log.i("lifecycle onAttachFrag:", "onAttachFragment");
+        super.onAttachFragment(fragment);
+    }
 }

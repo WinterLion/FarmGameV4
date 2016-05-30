@@ -4,6 +4,9 @@ package qcox.tacoma.uw.edu.farmgame;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +18,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import qcox.tacoma.uw.edu.farmgame.data.GameValues;
@@ -31,7 +35,8 @@ import qcox.tacoma.uw.edu.farmgame.data.GameValues;
 public class FarmFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
-    BaseAdapterHelper_farmField myAdapter;
+    BaseAdapterHelper_farmField mAdapter;
+    private Communicater mCommunicater;
 
     public FarmFragment() {
         // Required empty public constructor
@@ -41,17 +46,27 @@ public class FarmFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (savedInstanceState == null){
+            Log.i("lifecycle onCreateView:", "save: null fragment");
+        } else {
+            Log.i("lifecycle onCreateView:", "save: not null fragment");
+        }
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_farm, container, false);
         GridView gridView = (GridView) v.findViewById(R.id.gridView);
-        myAdapter = new BaseAdapterHelper_farmField(getContext(), GameValues.getCurrentPlayerValues().getLevel() * Config.LEVELUPFIELDGAP + Config.INITIALFIELD);
+        if (mAdapter == null && FarmActivity.mAdapter == null){
+            mAdapter = new BaseAdapterHelper_farmField(getContext(), GameValues.getCurrentPlayerValues().getLevel() * Config.LEVELUPFIELDGAP + Config.INITIALFIELD);
+        }else{
+            mAdapter = FarmActivity.mAdapter;
+            mAdapter.notifyDataSetChanged();
+        }
         TextView moneyTextView = (TextView) v.findViewById(R.id.money_textView);
         moneyTextView.setText("$: "+ GameValues.getCurrentPlayerValues().getMoney());
         TextView levelTextView = (TextView) v.findViewById(R.id.level_textView);
         levelTextView.setText("Lv: "+ GameValues.getCurrentPlayerValues().getLevel());
         TextView expTextView = (TextView) v.findViewById(R.id.experience_textView);
         expTextView.setText("Exp: "+ GameValues.getCurrentPlayerValues().getExp());
-        gridView.setAdapter(myAdapter);
+        gridView.setAdapter(mAdapter);
         gridView.setOnItemClickListener((AdapterView.OnItemClickListener) getActivity());
         return v;
     }
@@ -79,46 +94,159 @@ public class FarmFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
+
+    @Override
+    public void onAttach(Context context) {
+        Log.i("lifecycle onAttach:", "onAttach fragment");
+        super.onAttach(context);
+    }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.i("lifecycle onCreate:", "onCreate fragment");
+        super.onCreate(savedInstanceState);
+    }
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        Log.i("lifecycle onActivityCre", "onActivityCreated fragment");
+        super.onActivityCreated(savedInstanceState);
+    }
+    @Override
+    public void onStart() {
+        Log.i("lifecycle onStart", "onStart fragment");
+        super.onStart();
+    }
+    @Override
+    public void onResume() {
+        Log.i("lifecycle onResume", "onResume fragment");
+        super.onResume();
+    }
+    @Override
+    public void onPause() {
+        Log.i("lifecycle onPause", "onPause fragment");
+        super.onPause();
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("field_arraylist",BaseAdapterHelper_farmField.field_arraylist);
+        if (outState == null){
+            Log.i("lifecycle onSaveInstan", "onSaveInstanceState bundle null fragment");
+        }else{
+            Log.i("lifecycle onSaveInstan", "onSaveInstanceState bundle not null fragment");
+        }
+        super.onSaveInstanceState(outState);
+    }
+    @Override
+    public void onStop() {
+        Log.i("lifecycle onStop", "onStop fragment");
+        super.onStop();
+    }
+    @Override
+    public void onDestroyView() {
+        Log.i("lifecycle onDestroyView", "onDestroyView fragment");
+        super.onDestroyView();
+    }
+    @Override
+    public void onDestroy() {
+        Log.i("lifecycle onDestroy", "onDestroy fragment");
+        super.onDestroy();
+    }
+    @Override
+    public void onDetach() {
+        Log.i("lifecycle onDetach", "onDetach fragment");
+        super.onDetach();
+    }
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState == null){
+            Log.i("lifecycle onViewStateRe", "onViewStateRestored bundle null fragment");
+        }else{
+            Log.i("lifecycle onViewStateRe", "onViewStateRestored bundle not null fragment");
+            BaseAdapterHelper_farmField.field_arraylist = savedInstanceState.getParcelableArrayList("field_arraylist");
+        }
+        super.onViewStateRestored(savedInstanceState);
+
+    }
 }
-class Field {
+class Field implements Parcelable {
     int imageID;
     String typeOfCrops;
-    int mutureTime;//change to Timer later
-    Field(int imageID, String typeOfCrops, int mutureTime){
+    int mutureTime;
+    long systemCurrentTime;
+    Field(int imageID, String typeOfCrops, int mutureTime, long systemCurrentTime){
         this.imageID = imageID;
         this.typeOfCrops = typeOfCrops;
         this.mutureTime = mutureTime;
-//        this.progressBar = progressBar;
-//        this.textView = textView;
+        this.systemCurrentTime = systemCurrentTime;
+    }
+    private Field(Parcel in) {
+        typeOfCrops = in.readString();
+        imageID = in.readInt();
+        mutureTime = in.readInt();
+        systemCurrentTime = in.readLong();
     }
 
+    /**
+     * Describe the kinds of special objects contained in this Parcelable's
+     * marshalled representation.
+     * @return a bitmask indicating the set of special object types marshalled
+     * by the Parcelable.
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Flatten this object in to a Parcel.
+     * @param dest  The Parcel in which the object should be written.
+     * @param flags Additional flags about how the object should be written.
+     *              May be 0 or {@link #PARCELABLE_WRITE_RETURN_VALUE}.
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(typeOfCrops);
+        dest.writeInt(imageID);
+        dest.writeInt(mutureTime);
+        dest.writeLong(systemCurrentTime);
+    }
+    public static final Parcelable.Creator<Field> CREATOR = new Parcelable.Creator<Field>() {
+        public Field createFromParcel(Parcel in) {
+            return new Field(in);
+        }
+
+        public Field[] newArray(int size) {
+            return new Field[size];
+        }
+    };
 }
+
 
 class BaseAdapterHelper_farmField extends BaseAdapter{
 
     public static ArrayList<Field> field_arraylist;
-
-
     Context context;
+
     BaseAdapterHelper_farmField(Context context, int numOfField){
         this.context = context;
         if (field_arraylist == null){
-            field_arraylist = new ArrayList<Field>();
+            Log.i("field_arraylist is null", "array");
             for (int i = 0; i < numOfField; i++){
-                field_arraylist.add(new Field(R.drawable.field_100dp, Config.FIELD, 0));
+                field_arraylist.add(new Field(R.drawable.field_100dp, Config.FIELD, 0, 0));
             }
         }
         else {
+            Log.i("field_arraylis not null", "array");
             for (int i = 0; i < numOfField; i++){
                 Log.i("1, new adapter " + numOfField+","+field_arraylist.size(),"levelup");
                 if (field_arraylist.size() > i){
                     Log.i("2, new adapter " + numOfField+","+field_arraylist.size(),"levelup");
                     field_arraylist.set(i, new Field(R.drawable.field_100dp,
-                            field_arraylist.get(i).typeOfCrops, field_arraylist.get(i).mutureTime));
+                            field_arraylist.get(i).typeOfCrops, field_arraylist.get(i).mutureTime,
+                            field_arraylist.get(i).systemCurrentTime));
                     Log.i("3, new adapter " + numOfField+","+field_arraylist.size(),"levelup");
                 }
                 else {
-                    field_arraylist.add(new Field(R.drawable.field_100dp, Config.FIELD, 0));
+                    field_arraylist.add(new Field(R.drawable.field_100dp, Config.FIELD, 0, 0));
                     Log.i("4, new adapter " + numOfField+","+field_arraylist.size(),"levelup");
                 }
 
