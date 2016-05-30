@@ -21,26 +21,40 @@ public class PlayerValues {
     private int mLevel;
     //this is the current Exp of the player
     public int mExp;
+    //this is the current Score of the player
+    public int mScore;
 
     //these are the amounts of each item the player has
     public  Map<String, Integer> mItemMap;
 
     public PlayerValues(String theUserName) {
         mUserName = theUserName;
-        mMoney = Config.INITIALMONEY;
-        mLevel = Config.INITIALLEVEL;
-        mExp = Config.INITIALEXPERIENCE;
+        mMoney = Config.INITIAL_MONEY;
+        mLevel = Config.INITIAL_LEVEL;
+        mExp = Config.INITIAL_EXPERIENCE;
+        mScore = Config.INITIAL_SCORE;
         mItemMap = new HashMap<>();
         for (int i = 0; i < Config.INITIAL_PLANT_NAMES.length; i++) {
             mItemMap.put(Config.INITIAL_PLANT_NAMES[i], Config.INITIAL_PLANT_AMOUNTS[i]);
         }
     }
 
+
     PlayerValues(String theUserName, int theMoney, int theLevel, int theExp, Map<String, Integer> theItemMap) {
         mUserName = theUserName;
         mMoney = theMoney;
         mLevel = theLevel;
         mExp = theExp;
+        //mScore = theScore;
+        mItemMap = theItemMap;
+    }
+
+    PlayerValues(String theUserName, int theMoney, int theLevel, int theExp, int theScore, Map<String, Integer> theItemMap) {
+        mUserName = theUserName;
+        mMoney = theMoney;
+        mLevel = theLevel;
+        mExp = theExp;
+        mScore = theScore;
         mItemMap = theItemMap;
     }
 

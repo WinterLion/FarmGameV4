@@ -41,10 +41,10 @@ public class PlayerValuesDB {
      * this method gets the amount of money the user has from the server database
      * @param theActivity this is used for publishing toasts
      */
-    public void GetUserMoney(Activity theActivity) {
+    public void GetUserMoney(Activity theActivity, String username) {
         mActivity = theActivity;
         DownloadUserMoneyTask task = new DownloadUserMoneyTask();
-        task.execute(GET_PLAYER_MONEY_URL + GameValues.getCurrentPlayerValues().getUserName());
+        task.execute(GET_PLAYER_MONEY_URL + username);
     }
 
     /**

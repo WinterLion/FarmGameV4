@@ -8,13 +8,15 @@ import java.util.List;
  */
 public class Config {
 
-    final public static int INITIALMONEY = 100; //initial money the player has
-    final public static int INITIALEXPERIENCE = 0; //initial experience the player has
-    final public static int INITIALLEVEL = 0; //initial level the player has
+    final public static int INITIAL_MONEY = 100; //initial money the player has
+    final public static int INITIAL_EXPERIENCE = 0; //initial experience the player has
+    final public static int INITIAL_LEVEL = 0; //initial level the player has
+    final public static int INITIAL_SCORE = 0; //initial level the player has
+    
 
-    final public static int INITIALFIELD = 10;//initial field the player has
-    final public static int LEVELUPFIELDGAP = 1;//number of field player get reward when level up
-    final public static int LEVELUPEXPERIENCEREQUIRED = 10; //the experience player need to level up
+    final public static int INITIAL_FIELD = 10;//initial field the player has
+    final public static int LEVELUP_FIELD_GAP = 1;//number of field player get reward when level up
+    final public static int LEVELUP_EXPERIENCE_REQUIRED = 10; //the experience player need to level up
 
     final public static String FARM_GAME_LOGCAT = "Farm Game";
 

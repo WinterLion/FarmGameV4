@@ -78,10 +78,15 @@ public class HighScoreActivity extends AppCompatActivity implements HighScoreLis
             //pop a dialog to ask receivers' email
             AlertDialog.Builder alert = new AlertDialog.Builder(HighScoreActivity.this);
             LayoutInflater inflater = getLayoutInflater();
-            alert.setMessage("You can share your game score to your friends")
+            alert.setMessage(R.string.pleaseEnterAnEmail)
                     .create();
             final View v = inflater.inflate(R.layout.dialog_sendemail,null);
             alert.setView(v);
+            alert.setNegativeButton("not now", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                }
+            });
             alert.setPositiveButton("Send", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int id) {
@@ -100,11 +105,6 @@ public class HighScoreActivity extends AppCompatActivity implements HighScoreLis
 
                 }
             });
-            alert.setNegativeButton("not now", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int id) {
-                        }
-                    });
             alert.show();
         }
         return super.onOptionsItemSelected(item);

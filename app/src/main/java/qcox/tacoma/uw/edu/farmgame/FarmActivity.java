@@ -60,6 +60,7 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
 
     //this checks that the latest player values are loaded
     private void getLatestPlayerValues(){
+        //first make sure we know who the user is
         if (GameValues.mUsername == null) {
             //used for testing
             GameValues.mUsername = "guest@guest.com";
@@ -67,8 +68,8 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
             Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
             toast.show();
         }
-
-        getServerDatabasePlayerValues();
+        //check the database for PlayerValues
+        //getServerDatabasePlayerValues(GameValues.mUsername);
 
         if (GameValues.getCurrentPlayerValues() == null){
             PlayerValues theLocalValues = mySQLite.getLocalPlayerValues();
@@ -157,13 +158,14 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         transaction.commit();
     }
 
-    private void getServerDatabasePlayerValues(){
-        PlayerValuesDB theTask = new PlayerValuesDB();
-        theTask.UpdateUserMoney(this, GameValues.getCurrentPlayerValues().getMoney());
+    private void getServerDatabasePlayerValues(String theUser){
+       // PlayerValuesDB theTask = new PlayerValuesDB();
+        //theTask.UpdateUserMoney(this, GameValues.getCurrentPlayerValues().getMoney());
     }
 
     public void saveToServer(){
-
+        // PlayerValuesDB theTask = new PlayerValuesDB();
+        //theTask.UpdateUserMoney(this, GameValues.getCurrentPlayerValues().getMoney());
     }
 
     public void updateFromServer(){
@@ -175,9 +177,9 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         theTask.UpdateUserMoney(this, GameValues.getCurrentPlayerValues().getMoney());
     }
 
-    public void updateMoneyFromServer(){
+    public void updateMoneyFromServer(String theUserName){
         PlayerValuesDB theTask = new PlayerValuesDB();
-        theTask.GetUserMoney(this);
+        theTask.GetUserMoney(this, theUserName);
     }
 
     /**
@@ -399,14 +401,14 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
 //        TextView expTextView = (TextView) findViewById(R.id.experience_textView);
 
         Log.i("checkLevelUp called ","test");
-        if (GameValues.getCurrentPlayerValues().getExp() >= Config.LEVELUPEXPERIENCEREQUIRED){
+        if (GameValues.getCurrentPlayerValues().getExp() >= Config.LEVELUP_EXPERIENCE_REQUIRED){
             Log.i("level up " + GameValues.getCurrentPlayerValues().getLevel(),"levelup");
             GameValues.getCurrentPlayerValues().addLevel();
-            GameValues.getCurrentPlayerValues().addExp(-Config.LEVELUPEXPERIENCEREQUIRED);
+            GameValues.getCurrentPlayerValues().addExp(-Config.LEVELUP_EXPERIENCE_REQUIRED);
 //            levelTextView.setText("Lv: "+ GameValues.getCurrentPlayerValues().getLevel());
 //            moneyTextView.setText("$: "+ GameValues.getCurrentPlayerValues().getMoney());
 //            expTextView.setText("Exp: "+ GameValues.getCurrentPlayerValues().getExp());
-            mAdapter = new BaseAdapterHelper_farmField(getApplicationContext(),GameValues.getCurrentPlayerValues().getLevel() * Config.LEVELUPFIELDGAP + Config.INITIALFIELD);
+            mAdapter = new BaseAdapterHelper_farmField(getApplicationContext(),GameValues.getCurrentPlayerValues().getLevel() * Config.LEVELUP_FIELD_GAP + Config.INITIAL_FIELD);
 
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setMessage("Level Up! You earn an extra field! Congrat!")
