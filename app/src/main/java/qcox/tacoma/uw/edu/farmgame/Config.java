@@ -38,7 +38,7 @@ public class Config {
 //    final public static String POTATO = "Potato";
 //    final public static String STRAWBERRY = "Strawberry";
     final public static String FIELD = "field";
-    final public static String[] INITIAL_PLANT_NAMES = {"Potato"};
-    final public static int[] INITIAL_PLANT_AMOUNTS = {13};
+    final public static String[] INITIAL_PLANT_NAMES = {"Potato", "Corn", "Wheat", "Strawberry"};
+    final public static int[] INITIAL_PLANT_AMOUNTS = {5, 5, 5, 5};
 
 }

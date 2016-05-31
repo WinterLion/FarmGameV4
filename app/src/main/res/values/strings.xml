@@ -42,6 +42,8 @@
     <string name="LOGGEDIN">login</string>
     <string name="LOGIN_FILE">farmgame.LOGIN_FILE</string>
     <string name="action_logout">log out</string>
+    <string name="action_load">load</string>
+    <string name="action_save">save</string>
     <string name="facebook_app_id">1605744539743264</string>
     <string name="send_email">email friends</string>
     <string name="pleaseEnterAnEmail">Please enter your friend\'s email to share your high score:</string>

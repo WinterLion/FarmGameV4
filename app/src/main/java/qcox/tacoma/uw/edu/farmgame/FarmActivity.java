@@ -1,6 +1,7 @@
 package qcox.tacoma.uw.edu.farmgame;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,6 +34,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 
 import qcox.tacoma.uw.edu.farmgame.data.GameValues;
 import qcox.tacoma.uw.edu.farmgame.data.PlayerValues;
@@ -169,6 +172,16 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
             return true;
         }
 
+        if (id == R.id.action_save) {
+            saveToServer();
+            return true;
+        }
+
+        if (id == R.id.action_load) {
+            loadFromServer();
+            return true;
+        }
+
         if (id == R.id.send_email_menu) {
             //pop a dialog to ask receivers' email
             AlertDialog.Builder alert = new AlertDialog.Builder(FarmActivity.this);
@@ -262,23 +275,32 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
     }
 
     public void saveToServer(){
-        // PlayerValuesDB theTask = new PlayerValuesDB();
-        //theTask.UpdateUserMoney(this, GameValues.getCurrentPlayerValues().getMoney());
-    }
-
-    public void updateFromServer(){
-
-    }
-
-    public void updateMoneyToServer(){
         PlayerValuesDB theTask = new PlayerValuesDB();
-        theTask.UpdateUserMoney(this, GameValues.getCurrentPlayerValues().getMoney());
+        theTask.UpdatePlayerValuesServer(this, GameValues.getCurrentPlayerValues().getUserName(),
+                GameValues.getCurrentPlayerValues().getMoney(), GameValues.getCurrentPlayerValues().getLevel(),
+                GameValues.getCurrentPlayerValues().getExp(), GameValues.getCurrentPlayerValues().mScore);
+        Iterator iterator = GameValues.getCurrentPlayerValues().getItemMap().entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry map_values = (Map.Entry)iterator.next();
+            theTask.UpdateItemServer(this, GameValues.mUsername, (String)map_values.getKey(), (Integer)map_values.getValue());
+        }
     }
 
-    public void updateMoneyFromServer(String theUserName){
+    public void loadFromServer(){
         PlayerValuesDB theTask = new PlayerValuesDB();
-        theTask.GetUserMoney(this, theUserName);
+        theTask.GetPlayerValuesServer(this, GameValues.mUsername);
+        theTask.GetItemServer(this, GameValues.mUsername, "");
     }
+
+//    public void updateMoneyToServer(){
+//        PlayerValuesDB theTask = new PlayerValuesDB();
+//        theTask.UpdateUserMoney(this, GameValues.getCurrentPlayerValues().getMoney());
+//    }
+//
+//    public void updateMoneyFromServer(String theUserName){
+//        PlayerValuesDB theTask = new PlayerValuesDB();
+//        theTask.GetUserMoney(this, theUserName);
+//    }
 
     /**
      * this is when an item has its buy button pressed.

@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import qcox.tacoma.uw.edu.farmgame.items.FieldsObject;
+
 /**
  * Created by Cox Family on 5/24/2016.
  */
@@ -20,6 +22,7 @@ public class SQLiteFarmGame {
 
     private static final String GAME_STATE_TABLE = "GameState";
     private static final String INVENTORY_TABLE = "PlayerInventory";
+    private static final String FIELD_TABLE = "FieldStateTable";
 
     private GameStateDBHelper mGameStateDBHelper;
     private SQLiteDatabase mSQLiteDatabase;
@@ -56,11 +59,6 @@ public class SQLiteFarmGame {
             rowId = mSQLiteDatabase.replace(INVENTORY_TABLE, null, contentValues);
             answer = answer && rowId != -1;
         }
-
-//        for(int i = 0; i < thePlayerValues.getItemMap().size()){
-//
-//        }
-
         return answer;
     }
 
@@ -124,6 +122,72 @@ public class SQLiteFarmGame {
         return answer;
     }
 
+
+    /**
+     * Inserts the course into the local sqlite table. Returns true if successful, false otherwise.
+     * @param theFieldsObject
+     * @return true or false
+     */
+    public int saveSQLiteFields(FieldsObject theFieldsObject) {
+        int rows = 0;
+        for (int i = 0; i < theFieldsObject.getFields().size(); i++){
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("username", theFieldsObject.getUsername());
+            contentValues.put("position", theFieldsObject.getPosition(i));
+            contentValues.put("typeOfCrop", theFieldsObject.getCrop(i));
+            contentValues.put("datetime", theFieldsObject.getSystemtime());
+            long rowId = mSQLiteDatabase.replace(FIELD_TABLE, null, contentValues);
+            if (rowId != -1){
+                rows++;
+            }
+        }
+        return rows;
+    }
+
+
+    /**
+     * Returns the list of courses from the local Course table.
+     * @return list
+     */
+    public FieldsObject loadSQLiteFields(String theUser) {
+        String[] columns = {
+                "username", "position", "typeOfCrop", "datetime"
+        };
+        String userName;
+        int onePosition;
+        String oneCrop;
+        int systemtime;
+
+        String WhereColumns = "username=?";
+        String[] WhereValues = {theUser};
+        Cursor cursor = mSQLiteDatabase.query(
+                FIELD_TABLE,  // The table to query
+                columns,                               // The columns to return
+                WhereColumns,                                // The columns for the WHERE clause
+                WhereValues,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                 // The sort order
+        );
+        boolean first = true;
+        FieldsObject answer = null;
+        if(cursor.moveToFirst()) {
+            for (int i = 0; i < cursor.getCount(); i++) {
+                userName = cursor.getString(1);
+                onePosition = cursor.getInt(2);
+                oneCrop = cursor.getString(3);
+                systemtime = cursor.getInt(4);
+                if (first){
+                    answer = new FieldsObject(userName, systemtime);
+                    first = false;
+                }
+                answer.addField(onePosition, oneCrop);
+                cursor.moveToNext();
+            }
+        }
+        return answer;
+    }
+
     /**
      * Delete all the data from the GAME_STATE_TABLE
      */
@@ -132,6 +196,7 @@ public class SQLiteFarmGame {
         String[] WhereValues = {GameValues.mUsername};
         mSQLiteDatabase.delete(GAME_STATE_TABLE, WhereColumns, WhereValues);
         mSQLiteDatabase.delete(INVENTORY_TABLE, WhereColumns, WhereValues);
+        mSQLiteDatabase.delete(FIELD_TABLE, WhereColumns, WhereValues);
     }
 
 
@@ -155,6 +220,13 @@ public class SQLiteFarmGame {
         private static final String DROP_INVENTORY_TABLE_SQL =
                 "DROP TABLE IF EXISTS " + INVENTORY_TABLE;
 
+        private static final String CREATE_FIELD_TABLE_SQL =
+                "CREATE TABLE IF NOT EXISTS " + FIELD_TABLE
+                        + " (id INTEGER PRIMARY KEY, username TEXT NOT NULL, position INTEGER  NOT NULL, typeOfCrop TEXT, datetime INTEGER)";
+
+        private static final String DROP_FIELD_TABLE_SQL =
+                "DROP TABLE IF EXISTS " + FIELD_TABLE;
+
         public GameStateDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
             super(context, name, factory, version);
         }
@@ -163,12 +235,14 @@ public class SQLiteFarmGame {
         public void onCreate(SQLiteDatabase sqLiteDatabase) {
             sqLiteDatabase.execSQL(CREATE_GAME_STATE_TABLE_SQL);
             sqLiteDatabase.execSQL(CREATE_INVENTORY_TABLE_SQL);
+            sqLiteDatabase.execSQL(CREATE_FIELD_TABLE_SQL);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
             sqLiteDatabase.execSQL(DROP_GAME_STATE_TABLE_SQL);
             sqLiteDatabase.execSQL(DROP_INVENTORY_TABLE_SQL);
+            sqLiteDatabase.execSQL(DROP_FIELD_TABLE_SQL);
             onCreate(sqLiteDatabase);
         }
     }

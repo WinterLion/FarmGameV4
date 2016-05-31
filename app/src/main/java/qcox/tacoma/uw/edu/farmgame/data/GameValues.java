@@ -3,7 +3,9 @@ package qcox.tacoma.uw.edu.farmgame.data;
 import android.app.Activity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import qcox.tacoma.uw.edu.farmgame.items.PlantItems;
 import qcox.tacoma.uw.edu.farmgame.data.DownloadPlantsTask;
@@ -22,12 +24,22 @@ public class GameValues {
 
     public static PlayerValues mServerPlayerValues;
 
+    public static Map<String, Integer> mServerItemMap = new HashMap<>();
+
     public static PlayerValues getCurrentPlayerValues() {
         return mCurrentPlayerValues;
     }
 
+    public static PlayerValues getServerPlayerValues() {
+        return mServerPlayerValues;
+    }
+
     public static void setCurrentPlayerValues(PlayerValues mCurrentPlayerValues) {
         GameValues.mCurrentPlayerValues = mCurrentPlayerValues;
+    }
+
+    public static void setServerPlayerValues(PlayerValues mServerPlayerValues) {
+        GameValues.mServerPlayerValues = mServerPlayerValues;
     }
 
     public static PlantItems getPlantItem(int thePos) {
