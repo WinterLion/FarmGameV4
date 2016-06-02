@@ -8,15 +8,18 @@ import java.util.List;
  */
 public class Config {
 
-    final public static int INITIAL_MONEY = 100; //initial money the player has
+    final public static int INITIAL_MONEY = 0; //initial money the player has
     final public static int INITIAL_EXPERIENCE = 0; //initial experience the player has
     final public static int INITIAL_LEVEL = 0; //initial level the player has
     final public static int INITIAL_SCORE = 0; //initial level the player has
 
 
-    final public static int INITIAL_FIELD = 10;//initial field the player has
+    final public static int INITIAL_FIELD = 3;//initial field the player has
     final public static int LEVELUP_FIELD_GAP = 1;//number of field player get reward when level up
     final public static int LEVELUP_EXPERIENCE_REQUIRED = 10; //the experience player need to level up
+
+    final public static int MAX_RETURN_ON_HARVEST = 3;
+    final public static int MIN_RETURN_ON_HARVEST = 1;
 
     final public static String FARM_GAME_LOGCAT = "Farm Game";
 
@@ -38,7 +41,9 @@ public class Config {
 //    final public static String POTATO = "Potato";
 //    final public static String STRAWBERRY = "Strawberry";
     final public static String FIELD = "field";
-    final public static String[] INITIAL_PLANT_NAMES = {"Potato", "Corn", "Wheat", "Strawberry"};
-    final public static int[] INITIAL_PLANT_AMOUNTS = {5, 5, 5, 5};
+//    final public static String[] INITIAL_PLANT_NAMES = {"Potato", "Corn", "Wheat", "Strawberry"};
+//    final public static int[] INITIAL_PLANT_AMOUNTS = {5, 5, 5, 5};
+    final public static String[] INITIAL_PLANT_NAMES = {"Wheat"};
+    final public static int[] INITIAL_PLANT_AMOUNTS = {1};
 
 }

@@ -52,6 +52,9 @@ public class LoginActivity extends AppCompatActivity {
 
         mSharedPreferences = getSharedPreferences(getString(R.string.LOGIN_PREFS), Context.MODE_PRIVATE);
         Boolean loggedinBoolean = mSharedPreferences.getBoolean(getString(R.string.LOGGEDIN), false);
+        if (loggedinBoolean){
+            mSharedPreferences.getString("email", "");
+        }
 
         final EditText editText_username = (EditText) findViewById(R.id.editText_username);
         final EditText editText_password = (EditText) findViewById(R.id.editText_password);

@@ -40,7 +40,7 @@ public class PlayerValues {
     }
 
 
-    PlayerValues(String theUserName, int theMoney, int theLevel, int theExp, Map<String, Integer> theItemMap) {
+    public PlayerValues(String theUserName, int theMoney, int theLevel, int theExp, Map<String, Integer> theItemMap) {
         mUserName = theUserName;
         mMoney = theMoney;
         mLevel = theLevel;
@@ -49,7 +49,7 @@ public class PlayerValues {
         mItemMap = theItemMap;
     }
 
-    PlayerValues(String theUserName, int theMoney, int theLevel, int theExp, int theScore, Map<String, Integer> theItemMap) {
+    public PlayerValues(String theUserName, int theMoney, int theLevel, int theExp, int theScore, Map<String, Integer> theItemMap) {
         mUserName = theUserName;
         mMoney = theMoney;
         mLevel = theLevel;

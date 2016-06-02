@@ -10,9 +10,9 @@ public class FieldsObject {
 
     List<FarmField> mFields;
     String mUsername;
-    int mSystemtime;
+    long mSystemtime;
 
-    public FieldsObject(String theUsername, int theSystemTime){
+    public FieldsObject(String theUsername, long theSystemTime){
         mFields  = new ArrayList<>();
         mUsername = theUsername;
         mSystemtime = theSystemTime;
@@ -34,7 +34,7 @@ public class FieldsObject {
         this.mUsername = mUsername;
     }
 
-    public int getSystemtime() {
+    public long getSystemtime() {
         return mSystemtime;
     }
 

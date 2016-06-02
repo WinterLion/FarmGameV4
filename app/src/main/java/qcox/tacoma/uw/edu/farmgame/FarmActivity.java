@@ -1,7 +1,6 @@
 package qcox.tacoma.uw.edu.farmgame;
 
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,7 +28,6 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -172,15 +170,15 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
             return true;
         }
 
-        if (id == R.id.action_save) {
-            saveToServer();
-            return true;
-        }
-
-        if (id == R.id.action_load) {
-            loadFromServer();
-            return true;
-        }
+//        if (id == R.id.action_save) {
+//            saveToServer();
+//            return true;
+//        }
+//
+//        if (id == R.id.action_load) {
+//            loadFromServer();
+//            return true;
+//        }
 
         if (id == R.id.send_email_menu) {
             //pop a dialog to ask receivers' email
@@ -201,7 +199,7 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
                     String[] to = {email};
                     intent.putExtra(Intent.EXTRA_EMAIL, to);
                     intent.putExtra(Intent.EXTRA_SUBJECT, "Check Out This Farm Game");
-                    intent.putExtra(Intent.EXTRA_TEXT, "How are you my friend? Look how awesome I did in the farm game! I have earned xxx points!");
+                    intent.putExtra(Intent.EXTRA_TEXT, "How are you my friend? Look how awesome I did in the farm game! I have earned " + calculateHighScore() + " points!");
                     intent.setType("message/rfc822");
                     Intent chooser = Intent.createChooser(intent, "Send Email");
                     startActivity(chooser);
@@ -490,6 +488,8 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         if (GameValues.hasPlantItem(typeOfCrops)){
             GameValues.getCurrentPlayerValues().addMoney(GameValues.getPlantItem(typeOfCrops).sellCost);
             GameValues.getCurrentPlayerValues().addExp(GameValues.getPlantItem(typeOfCrops).exp);
+            GameValues.getCurrentPlayerValues().addItemAmount(GameValues.getPlantItem(typeOfCrops).name,
+                    (int) Math.floor(Math.random() * Config.MAX_RETURN_ON_HARVEST) + Config.MIN_RETURN_ON_HARVEST);
         } else if (typeOfCrops == Config.FIELD) {
             //do nothing
         } else {

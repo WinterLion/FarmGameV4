@@ -146,7 +146,7 @@ public class SQLiteFarmGame {
 
 
     /**
-     * Returns the list of courses from the local Course table.
+     * Returns the list of courses from the local Fields table.
      * @return list
      */
     public FieldsObject loadSQLiteFields(String theUser) {
@@ -156,7 +156,7 @@ public class SQLiteFarmGame {
         String userName;
         int onePosition;
         String oneCrop;
-        int systemtime;
+        long systemtime;
 
         String WhereColumns = "username=?";
         String[] WhereValues = {theUser};
@@ -176,7 +176,7 @@ public class SQLiteFarmGame {
                 userName = cursor.getString(1);
                 onePosition = cursor.getInt(2);
                 oneCrop = cursor.getString(3);
-                systemtime = cursor.getInt(4);
+                systemtime = cursor.getLong(4);
                 if (first){
                     answer = new FieldsObject(userName, systemtime);
                     first = false;
@@ -189,7 +189,7 @@ public class SQLiteFarmGame {
     }
 
     /**
-     * Delete all the data from the GAME_STATE_TABLE
+     * Delete all the data from the TABLES
      */
     public void deleteGameState() {
         String WhereColumns = "username=?";
