@@ -40,6 +40,7 @@
 
     <string name="LOGIN_PREFS">farmgame.PREFS</string>
     <string name="LOGGEDIN">login</string>
+    <string name="SharedPreference_currentUser">SharedPreference_currentUser</string>
     <string name="LOGIN_FILE">farmgame.LOGIN_FILE</string>
     <string name="action_logout">log out</string>
     <string name="action_load">load</string>

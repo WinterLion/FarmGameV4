@@ -42,6 +42,7 @@ import qcox.tacoma.uw.edu.farmgame.data.PlayerValues;
 import qcox.tacoma.uw.edu.farmgame.data.PlayerValuesDB;
 import qcox.tacoma.uw.edu.farmgame.data.SQLiteFarmGame;
 import qcox.tacoma.uw.edu.farmgame.highscore.HighScore;
+import qcox.tacoma.uw.edu.farmgame.items.FieldsObject;
 
 /**
  * This class is the major activity in the project.
@@ -60,7 +61,6 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
     public static BaseAdapterHelper_farmField mAdapter;
     Bundle myBundle;
     SQLiteFarmGame mySQLite;
-    ArrayList<Field> mFieldList;
 
     //use to fix double click bug
     int levelUpPosition;
@@ -88,6 +88,9 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_farm);
+
+//        //create empty adapter to
+//        mAdapter = new BaseAdapterHelper_farmField();
         if (savedInstanceState == null){
             BaseAdapterHelper_farmField.field_arraylist = new ArrayList<>();
             Log.i("lifecycle onCreate:", "save: null");
@@ -99,6 +102,92 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         myBundle = new Bundle();
         mySQLite = new SQLiteFarmGame(this);
         getLatestPlayerValues();
+        Log.i("GV currentuser: ", GameValues.mUsername);
+        Log.i("currentuser: ", GameValues.getCurrentPlayerValues().getUserName());
+        if (findViewById(R.id.fragment_container)!= null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new FarmFragment())
+                    .addToBackStack(null)
+                    .commit();
+
+        }
+
+        FieldsObject fieldsObject = mySQLite.loadSQLiteFields(GameValues.getCurrentPlayerValues().getUserName());
+        if (fieldsObject != null){
+            int size = fieldsObject.getFields().size();
+            BaseAdapterHelper_farmField.field_arraylist = new ArrayList<>();
+            String typeOfCrops;
+            long systemTime;
+            int mutureTime = 0;
+            int imageID = 0;
+            for (int i = 0; i < size; i++){
+                typeOfCrops = fieldsObject.getCrop(i);
+                systemTime = fieldsObject.getSystemTime(i);
+                //crop is not planted yet, empty field
+                if (typeOfCrops.equals(Config.FIELD)){
+                    systemTime = 0;
+                    mutureTime = 0;
+                    imageID = R.drawable.field_100dp;
+                }
+                //crop is planted
+                else {
+                    //get ImageID
+                    try{
+                        if (typeOfCrops.equals(Config.CORN)){
+                            imageID = R.drawable.corn_100dp;
+                            mutureTime = Config.CORNMUTURETIME;
+                        }
+                        if (typeOfCrops.equals(Config.STRAWBERRY)){
+                            imageID = R.drawable.strawberry_100dp;
+                            mutureTime = Config.STRAWBERRYMUTURETIME;
+                        }
+                        if (typeOfCrops.equals(Config.WHEAT)){
+                            imageID = R.drawable.wheat_100dp;
+                            mutureTime = Config.WHEATMUTURETIME;
+                        }
+                        if (typeOfCrops.equals(Config.POTATO)){
+                            imageID = R.drawable.potato_100dp;
+                            mutureTime = Config.POTATOMUTURETIME;
+                        }
+                    } catch (Exception e){
+                        Log.e("lifecycle", "imageID is not initialized");
+                    }
+//                    if (GameValues.hasPlantItem(typeOfCrops)){
+//                        Log.e("works", typeOfCrops);
+//                    }
+
+//                    while(GameValues.getPlantItemsList().size() == 0){
+//                        try{
+//                            wait(20);
+//                        } catch (InterruptedException e){
+//
+//                        }
+//                    }
+//                    mutureTime = GameValues.getPlantItem(typeOfCrops).growTime;
+
+
+
+                    //crop is planted and read to harvest
+                    if (System.currentTimeMillis() - systemTime >= mutureTime){
+                        systemTime = 0;
+                        mutureTime = -1;//muture crop's muture time is less than 0
+                    }
+                    //crop is planted and not ready to harvest
+                    else {
+                        mutureTime = (int) (System.currentTimeMillis() - systemTime);
+                    }
+                }
+                Log.i("lifecycle onCreate: ", i + " imageID: "+imageID + "Crops: " + typeOfCrops + "mutureTime: "+ mutureTime + "systemtime: "+ systemTime);
+                BaseAdapterHelper_farmField.field_arraylist.add(new Field(imageID, typeOfCrops, mutureTime, systemTime));
+            }
+        }
+    }
+
+    @Override
+    public void onStart(){
+        Log.i("lifecycle onStart:", "onStart");
+        super.onStart();
+
     }
 
     @Override
@@ -127,7 +216,7 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         //check the database for PlayerValues
         //getServerDatabasePlayerValues(GameValues.mUsername);
 
-        if (GameValues.getCurrentPlayerValues() == null){
+        if (GameValues.getCurrentPlayerValues() == null || (GameValues.getCurrentPlayerValues().getUserName() != GameValues.mUsername)){
             PlayerValues theLocalValues = mySQLite.getLocalPlayerValues();
 
             if (theLocalValues != null) {
@@ -221,18 +310,7 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
 
 
 
-    @Override
-    public void onStart(){
-        Log.i("lifecycle onStart:", "onStart");
-        super.onStart();
-        if (findViewById(R.id.fragment_container)!= null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new FarmFragment())
-                    .addToBackStack(null)
-                    .commit();
 
-        }
-    }
 
     /**
      * this is used to starts the high score activity when the highscore button is pressed.
@@ -459,6 +537,7 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
 
             //field.imageID = R.drawable.corn_100dp;
             field.mutureTime = GameValues.getPlantItem(seed).growTime;
+            field.systemCurrentTime = System.currentTimeMillis();
             field.typeOfCrops = seed;
             mAdapter.notifyDataSetChanged();
             final Handler handler = new Handler();
@@ -723,11 +802,23 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
     protected void onStop() {
         Log.i("lifecycle onStop:", "onStop");
         super.onStop();
+        String username = GameValues.getCurrentPlayerValues().getUserName();
+        mySQLite.deleteFieldTable();
+        FieldsObject fieldsObject = new FieldsObject(username);
+        for (int i = 0; i < BaseAdapterHelper_farmField.field_arraylist.size(); i++){
+            String crop = BaseAdapterHelper_farmField.field_arraylist.get(i).typeOfCrops;
+            long systemCurrentTime = BaseAdapterHelper_farmField.field_arraylist.get(i).systemCurrentTime;
+            fieldsObject.addField(i,crop, systemCurrentTime);
+            Log.i("lifecycle onStop:", "onStop: " + i +" "+ BaseAdapterHelper_farmField.field_arraylist.get(i).typeOfCrops + "systemtime: "+ systemCurrentTime);
+        }
+        mySQLite.saveSQLiteFields(fieldsObject);
+
     }
     @Override
     protected void onDestroy() {
         Log.i("lifecycle onDestroy:", "onDestroy");
         super.onDestroy();
+
     }
     @Override
     protected void onPause() {

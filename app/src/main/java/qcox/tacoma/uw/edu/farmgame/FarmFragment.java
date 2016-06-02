@@ -4,6 +4,7 @@ package qcox.tacoma.uw.edu.farmgame;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -54,9 +55,41 @@ public class FarmFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_farm, container, false);
         GridView gridView = (GridView) v.findViewById(R.id.gridView);
-        if (mAdapter == null || FarmActivity.mAdapter == null){
+//        if (mAdapter == null){
+//            Log.i("adapter:", "Adpter == null");
+//        }
+//        if (FarmActivity.mAdapter == null){
+//            Log.i("adapter", "Farm.Adpter == null");
+//        }
+        if (FarmActivity.mAdapter == null || LoginActivity.logInCount >1){
+//            Log.i("lifecycle onCreateView:", "Adpter == null");
             mAdapter = new BaseAdapterHelper_farmField(getContext(), GameValues.getCurrentPlayerValues().getLevel() * Config.LEVELUP_FIELD_GAP + Config.INITIAL_FIELD);
-        }else{
+            if (LoginActivity.logInCount > 1){
+                LoginActivity.logInCount = 1;//use to fix rotate losing game states bug
+            }
+            for (int i = 0; i < mAdapter.field_arraylist.size(); i++){
+                final Field field = (Field) mAdapter.field_arraylist.get(i);
+                if (!field.typeOfCrops.equals(Config.FIELD)){
+                    mAdapter.notifyDataSetChanged();
+                    final Handler handler = new Handler();
+                    final Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            field.mutureTime -= 1000;
+                            mAdapter.notifyDataSetChanged();
+                            if (field.mutureTime > 0){
+                                handler.postDelayed(this, 1000);
+                            }
+                            Log.i("1,mutureTime: "+field.mutureTime, "runnable");
+                        }
+                    };
+                    handler.postDelayed(runnable, 1000);
+                }
+            }
+
+        }
+        else{
+            Log.i("adapter", "FarmActivity.mAdapter != null");
             mAdapter = FarmActivity.mAdapter;
             mAdapter.notifyDataSetChanged();
         }
@@ -226,28 +259,32 @@ class BaseAdapterHelper_farmField extends BaseAdapter{
     public static ArrayList<Field> field_arraylist;
     Context context;
 
+    BaseAdapterHelper_farmField(){
+
+    }
+
     BaseAdapterHelper_farmField(Context context, int numOfField){
         this.context = context;
         if (field_arraylist == null){
-            Log.i("field_arraylist is null", "array");
             for (int i = 0; i < numOfField; i++){
                 field_arraylist.add(new Field(R.drawable.field_100dp, Config.FIELD, 0, 0));
+                Log.i("lifecycle BaseApater: ", "field_arraylist == null, add new field: "+ i);
             }
         }
         else {
-            Log.i("field_arraylis not null", "array");
             for (int i = 0; i < numOfField; i++){
-                Log.i("1, new adapter " + numOfField+","+field_arraylist.size(),"levelup");
                 if (field_arraylist.size() > i){
-                    Log.i("2, new adapter " + numOfField+","+field_arraylist.size(),"levelup");
-                    field_arraylist.set(i, new Field(R.drawable.field_100dp,
+                    field_arraylist.set(i, new Field(field_arraylist.get(i).imageID,
                             field_arraylist.get(i).typeOfCrops, field_arraylist.get(i).mutureTime,
                             field_arraylist.get(i).systemCurrentTime));
-                    Log.i("3, new adapter " + numOfField+","+field_arraylist.size(),"levelup");
+//                    Log.i("lifecycle BaseApater: ", "field_arraylist != null, update new field: "+ i
+//                            + " Crops: "+ field_arraylist.get(i).typeOfCrops
+//                            + " mutureTime: "+ field_arraylist.get(i).mutureTime
+//                            + " systemTime: " + field_arraylist.get(i).systemCurrentTime);
                 }
                 else {
                     field_arraylist.add(new Field(R.drawable.field_100dp, Config.FIELD, 0, 0));
-                    Log.i("4, new adapter " + numOfField+","+field_arraylist.size(),"levelup");
+//                    Log.i("lifecycle BaseApater: ", "i = "+i+","+field_arraylist.size()+"levelup");
                 }
 
             }

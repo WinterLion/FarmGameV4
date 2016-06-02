@@ -135,7 +135,7 @@ public class SQLiteFarmGame {
             contentValues.put("username", theFieldsObject.getUsername());
             contentValues.put("position", theFieldsObject.getPosition(i));
             contentValues.put("typeOfCrop", theFieldsObject.getCrop(i));
-            contentValues.put("datetime", theFieldsObject.getSystemtime());
+            contentValues.put("datetime", theFieldsObject.getSystemTime(i));
             long rowId = mSQLiteDatabase.replace(FIELD_TABLE, null, contentValues);
             if (rowId != -1){
                 rows++;
@@ -156,7 +156,7 @@ public class SQLiteFarmGame {
         String userName;
         int onePosition;
         String oneCrop;
-        int systemtime;
+        long systemtime;
 
         String WhereColumns = "username=?";
         String[] WhereValues = {theUser};
@@ -173,15 +173,15 @@ public class SQLiteFarmGame {
         FieldsObject answer = null;
         if(cursor.moveToFirst()) {
             for (int i = 0; i < cursor.getCount(); i++) {
-                userName = cursor.getString(1);
-                onePosition = cursor.getInt(2);
-                oneCrop = cursor.getString(3);
-                systemtime = cursor.getInt(4);
+                userName = cursor.getString(0);
+                onePosition = cursor.getInt(1);
+                oneCrop = cursor.getString(2);
+                systemtime = cursor.getLong(3);
                 if (first){
-                    answer = new FieldsObject(userName, systemtime);
+                    answer = new FieldsObject(userName);
                     first = false;
                 }
-                answer.addField(onePosition, oneCrop);
+                answer.addField(onePosition, oneCrop, systemtime);
                 cursor.moveToNext();
             }
         }
@@ -196,6 +196,12 @@ public class SQLiteFarmGame {
         String[] WhereValues = {GameValues.mUsername};
         mSQLiteDatabase.delete(GAME_STATE_TABLE, WhereColumns, WhereValues);
         mSQLiteDatabase.delete(INVENTORY_TABLE, WhereColumns, WhereValues);
+        mSQLiteDatabase.delete(FIELD_TABLE, WhereColumns, WhereValues);
+    }
+
+    public void deleteFieldTable() {
+        String WhereColumns = "username=?";
+        String[] WhereValues = {GameValues.mUsername};
         mSQLiteDatabase.delete(FIELD_TABLE, WhereColumns, WhereValues);
     }
 
