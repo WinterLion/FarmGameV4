@@ -615,7 +615,7 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         Log.i("checkLevelUp called ","test");
         if (GameValues.getCurrentPlayerValues().getExp() >= Config.LEVELUP_EXPERIENCE_REQUIRED){
             Log.i("level up " + GameValues.getCurrentPlayerValues().getLevel(),"levelup");
-            GameValues.getCurrentPlayerValues().addLevel();
+            GameValues.getCurrentPlayerValues().addOneLevel();
             GameValues.getCurrentPlayerValues().addExp(-Config.LEVELUP_EXPERIENCE_REQUIRED);
 //            levelTextView.setText("Lv: "+ GameValues.getCurrentPlayerValues().getLevel());
 //            moneyTextView.setText("$: "+ GameValues.getCurrentPlayerValues().getMoney());

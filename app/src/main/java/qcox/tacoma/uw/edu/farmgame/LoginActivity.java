@@ -187,8 +187,13 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                 } catch (Exception e) {
-                    response = "Unable to download the list of users, Reason: "
-                            + e.getMessage();
+                    response = "Unable to download the list of users, Reason: ";
+                    if (e.getMessage().startsWith("Unable to resolve host")){
+                        response += "Could not contact remote server.  Check your internet connection.";
+                    } else {
+                        response += e.getMessage();
+                    }
+
                 }
                 finally {
                     if (urlConnection != null)

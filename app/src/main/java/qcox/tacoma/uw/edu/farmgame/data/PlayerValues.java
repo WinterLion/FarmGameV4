@@ -62,31 +62,42 @@ public class PlayerValues {
         return mUserName;
     }
 
-    public  void setUserName(String UserName) {
-        mUserName = UserName;
+    public  void setUserName(String UserName) throws IllegalArgumentException{
+        if (UserName != null){
+            mUserName = UserName;
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     public  int getMoney() {
         return mMoney;
     }
 
+    /**
+     * note that this allows for negative amounts to be subtracted with
+     * this same method.  This is by design.
+     */
     public  void addMoney(int Money) {
         mMoney += Money;
     }
 
-    public  void setMoney(int Money) {
+    public  void setMoney(int Money) throws IllegalArgumentException {
         mMoney = Money;
+        if (mMoney <= 0){
+            mMoney = 0;
+        }
     }
 
     public  int getLevel() {
         return mLevel;
     }
 
-    public  void addLevel() {
+    public  void addOneLevel() {
         mLevel ++;
     }
 
-    public  void setLevel(int Level) {
+    public  void setLevel(int Level) throws IllegalArgumentException {
         mLevel = Level;
     }
 
@@ -94,11 +105,11 @@ public class PlayerValues {
         return mExp;
     }
 
-    public  void addExp(int Exp) {
+    public  void addExp(int Exp) throws IllegalArgumentException {
         mExp += Exp;
     }
 
-    public  void setExp(int Exp) {
+    public  void setExp(int Exp) throws IllegalArgumentException {
         mExp = Exp;
     }
 
@@ -121,14 +132,18 @@ public class PlayerValues {
         mItemMap.put(theItem, amount);
     }
 
-    public  void setItemAmount(String theItem, int theNewAmount) {
-        mItemMap.put(theItem, theNewAmount);
+    public  void setItemAmount(String theItem, int theNewAmount) throws IllegalArgumentException {
+        if (theItem != null && theNewAmount >= 0){
+            mItemMap.put(theItem, theNewAmount);
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
 
     public  Map<String, Integer> getItemMap() {return mItemMap;}
 
-    public  void setItemMap(Map<String, Integer> ItemMap) {
+    public  void setItemMap(Map<String, Integer> ItemMap) throws IllegalArgumentException {
         mItemMap = ItemMap;
     }
 }
