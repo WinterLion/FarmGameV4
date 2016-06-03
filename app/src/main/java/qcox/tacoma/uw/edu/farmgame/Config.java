@@ -4,7 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by james on 5/20/2016.
+ * This is used to save some configuration, and the initial states of farm
+ * @author James, Quinn
+ * @version 1.0
+ * @since 2016-5-4
  */
 public class Config {
 
@@ -43,7 +46,7 @@ public class Config {
     final public static String FIELD = "field";
 //    final public static String[] INITIAL_PLANT_NAMES = {"Potato", "Corn", "Wheat", "Strawberry"};
 //    final public static int[] INITIAL_PLANT_AMOUNTS = {5, 5, 5, 5};
-    final public static String[] INITIAL_PLANT_NAMES = {"Wheat"};
-    final public static int[] INITIAL_PLANT_AMOUNTS = {1};
+    final public static String[] INITIAL_PLANT_NAMES = {"Wheat"};//initial crops the player log in for the first time
+    final public static int[] INITIAL_PLANT_AMOUNTS = {1};//initial amount of the cooresponding crops the player log in for the first time
 
 }

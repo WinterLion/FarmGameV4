@@ -28,9 +28,17 @@ public class Users {
         this.mPassword = password;
     }
 
+    /**
+     * get username
+     * @return String username
+     */
     String getUsername () {
             return mUsername;
         }
+    /**
+     * get passowrd
+     * @return String password
+     */
     String getPassword(){
             return mPassword;
         }

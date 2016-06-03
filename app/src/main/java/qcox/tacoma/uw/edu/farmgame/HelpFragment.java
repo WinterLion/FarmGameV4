@@ -9,16 +9,25 @@ import android.view.ViewGroup;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Display a simple tutorial to help user play the game
+ * @author James, Quinn
+ * @version 1.0
+ * @since 2016-5-4
  */
 public class HelpFragment extends Fragment {
 
 
+    /**
+     * empty constructor
+     */
     public HelpFragment() {
         // Required empty public constructor
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

@@ -25,8 +25,10 @@ import qcox.tacoma.uw.edu.farmgame.data.GameValues;
 
 
 /**
- * A simple {@link Fragment} subclass which currently holds the buttons to the
- * highscore activity and the itemListfragment that shows the inventory.
+ * The main fragment to perform farming action by using customized base adapter.
+ * The BaseApater and Field classes exists in the same java file
+ * because the three class are connected and only can be used as a whole.
+ * FarmFragment contains the farm fields, player's states(level, money, experience), and connection to highscore and silo/shop
  *
  * @author James, Quinn
  * @version 1.0
@@ -34,15 +36,20 @@ import qcox.tacoma.uw.edu.farmgame.data.GameValues;
  */
 public class FarmFragment extends Fragment {
 
-    private OnFragmentInteractionListener mListener;
+//    private OnFragmentInteractionListener mListener;
     BaseAdapterHelper_farmField mAdapter;
-    private Communicater mCommunicater;
 
+    /**
+     * empty constructor
+     */
     public FarmFragment() {
         // Required empty public constructor
     }
 
-    //this creates the view
+    /**
+     * {@inheritDoc}
+     * creates the view, load game states to the adapter
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -103,15 +110,12 @@ public class FarmFragment extends Fragment {
         return v;
     }
 
-    private void updateTopValues() {
 
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+//    public void onButtonPressed(Uri uri) {
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
+//    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -127,36 +131,64 @@ public class FarmFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * {@inheritDoc}
+     * also for learning the life cycle
+     */
     @Override
     public void onAttach(Context context) {
         Log.i("lifecycle onAttach:", "onAttach fragment");
         super.onAttach(context);
     }
+    /**
+     * {@inheritDoc}
+     * also for learning the life cycle
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Log.i("lifecycle onCreate:", "onCreate fragment");
         super.onCreate(savedInstanceState);
     }
+    /**
+     * {@inheritDoc}
+     * also for learning the life cycle
+     */
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         Log.i("lifecycle onActivityCre", "onActivityCreated fragment");
         super.onActivityCreated(savedInstanceState);
     }
+    /**
+     * {@inheritDoc}
+     * also for learning the life cycle
+     */
     @Override
     public void onStart() {
         Log.i("lifecycle onStart", "onStart fragment");
         super.onStart();
     }
+    /**
+     * {@inheritDoc}
+     * also for learning the life cycle
+     */
     @Override
     public void onResume() {
         Log.i("lifecycle onResume", "onResume fragment");
         super.onResume();
     }
+    /**
+     * {@inheritDoc}
+     * also for learning the life cycle
+     */
     @Override
     public void onPause() {
         Log.i("lifecycle onPause", "onPause fragment");
         super.onPause();
     }
+    /**
+     * {@inheritDoc}
+     * save game states
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList("field_arraylist",BaseAdapterHelper_farmField.field_arraylist);
@@ -167,26 +199,46 @@ public class FarmFragment extends Fragment {
         }
         super.onSaveInstanceState(outState);
     }
+    /**
+     * {@inheritDoc}
+     * also for learning the life cycle
+     */
     @Override
     public void onStop() {
         Log.i("lifecycle onStop", "onStop fragment");
         super.onStop();
     }
+    /**
+     * {@inheritDoc}
+     * also for learning the life cycle
+     */
     @Override
     public void onDestroyView() {
         Log.i("lifecycle onDestroyView", "onDestroyView fragment");
         super.onDestroyView();
     }
+    /**
+     * {@inheritDoc}
+     * also for learning the life cycle
+     */
     @Override
     public void onDestroy() {
         Log.i("lifecycle onDestroy", "onDestroy fragment");
         super.onDestroy();
     }
+    /**
+     * {@inheritDoc}
+     * also for learning the life cycle
+     */
     @Override
     public void onDetach() {
         Log.i("lifecycle onDetach", "onDetach fragment");
         super.onDetach();
     }
+    /**
+     * {@inheritDoc}
+     * reload game states
+     */
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState == null){
@@ -199,6 +251,14 @@ public class FarmFragment extends Fragment {
 
     }
 }
+
+/**
+ * Field object contains the information of the single field
+ * It implements Parcelable so that can be saved within Bundle for keeping user's game states when quit the game and come back.
+ * @author James, Quinn
+ * @version 1.0
+ * @since 2016-5-4
+ */
 class Field implements Parcelable {
     int imageID;
     String typeOfCrops;
@@ -210,6 +270,11 @@ class Field implements Parcelable {
         this.mutureTime = mutureTime;
         this.systemCurrentTime = systemCurrentTime;
     }
+
+    /**
+     * constructor
+     * @param in
+     */
     private Field(Parcel in) {
         typeOfCrops = in.readString();
         imageID = in.readInt();
@@ -241,6 +306,10 @@ class Field implements Parcelable {
         dest.writeInt(mutureTime);
         dest.writeLong(systemCurrentTime);
     }
+
+    /**
+     * create Parcelable object
+     */
     public static final Parcelable.Creator<Field> CREATOR = new Parcelable.Creator<Field>() {
         public Field createFromParcel(Parcel in) {
             return new Field(in);
@@ -252,7 +321,13 @@ class Field implements Parcelable {
     };
 }
 
-
+/**
+ * Customize BaseApater to contain timer and picture
+ * BaseApater is userd to build farm fields
+ * @author James, Quinn
+ * @version 1.0
+ * @since 2016-5-4
+ */
 class BaseAdapterHelper_farmField extends BaseAdapter{
 
     public static ArrayList<Field> field_arraylist;
@@ -262,6 +337,11 @@ class BaseAdapterHelper_farmField extends BaseAdapter{
 
     }
 
+    /**
+     * constructor
+     * @param context
+     * @param numOfField
+     */
     BaseAdapterHelper_farmField(Context context, int numOfField){
         this.context = context;
         if (field_arraylist == null){
@@ -294,23 +374,10 @@ class BaseAdapterHelper_farmField extends BaseAdapter{
 
 
     /**
-     * Get a View that displays the data at the specified position in the data set. You can either
-     * create a View manually or inflate it from an XML layout file. When the View is inflated, the
-     * parent View (GridView, ListView...) will apply default layout parameters unless you use
-     * {@link LayoutInflater#inflate(int, ViewGroup, boolean)}
-     * to specify a root view and to prevent attachment to the root.
-     *
-     * @param position    The position of the item within the adapter's data set of the item whose view
-     *                    we want.
-     * @param convertView The old view to reuse, if possible. Note: You should check that this view
-     *                    is non-null and of an appropriate typeOfCrops before using. If it is not possible to convert
-     *                    this view to display the correct data, this method can create a new view.
-     *                    Heterogeneous lists can specify their number of view types, so that this View is
-     *                    always of the right typeOfCrops (see {@link #getViewTypeCount()} and
-     *                    {@link #getItemViewType(int)}).
-     * @param parent      The parent that this view will eventually be attached to
-     * @return A View corresponding to the data at the specified position.
+     * Get a View that displays the field at the specified position in the farm fields.
+     * {@inheritDoc}
      */
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View fieldView = convertView;
@@ -338,12 +405,19 @@ class BaseAdapterHelper_farmField extends BaseAdapter{
         return fieldView;
     }
 
-
+    /**
+     * change the default value to false to disable the field if the crops is not ready to harvest.
+     * @return false
+     */
     @Override
     public boolean areAllItemsEnabled() {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     * if the crop is ready to harvest, the user can click the field. Otherwise, the field is disable.
+     */
     @Override
     public boolean isEnabled(int position) {
         // Return true for clickable, false for not
@@ -357,8 +431,9 @@ class BaseAdapterHelper_farmField extends BaseAdapter{
     }
 
 
-
-
+    /**
+     * used to recycle View objects to speed up when a lot of Views exist in the farm
+     */
     class ViewHolder{
         ImageView myField_ImageView;
         TextView myTimer_TextView;
@@ -368,9 +443,7 @@ class BaseAdapterHelper_farmField extends BaseAdapter{
         }
     }
     /**
-     * How many items are in the data set represented by this Adapter.
-     *
-     * @return Count of items.
+     * {@inheritDoc}
      */
     @Override
     public int getCount() {
@@ -378,11 +451,7 @@ class BaseAdapterHelper_farmField extends BaseAdapter{
     }
 
     /**
-     * Get the data item associated with the specified position in the data set.
-     *
-     * @param position Position of the item whose data we want within the adapter's
-     *                 data set.
-     * @return The data at the specified position.
+     * {@inheritDoc}
      */
     @Override
     public Object getItem(int position) {
@@ -390,10 +459,7 @@ class BaseAdapterHelper_farmField extends BaseAdapter{
     }
 
     /**
-     * Get the row id associated with the specified position in the list.
-     *
-     * @param position The position of the item within the adapter's data set whose row id we want.
-     * @return The id of the item at the specified position.
+     * {@inheritDoc}
      */
     @Override
     public long getItemId(int position) {

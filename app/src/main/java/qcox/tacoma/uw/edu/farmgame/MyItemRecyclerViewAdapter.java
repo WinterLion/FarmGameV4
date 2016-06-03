@@ -36,6 +36,9 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         mListener = listener;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -43,6 +46,9 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         return new ViewHolder(view);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
@@ -64,12 +70,17 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             }
         });
     }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getItemCount() {
         return mValues.size();
     }
 
+    /**
+     * used to recycle views to speed up
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final ImageView mItemImageView;
@@ -84,7 +95,9 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             mNameView = (TextView) view.findViewById(R.id.name);
             mAmountView = (TextView) view.findViewById(R.id.amount);
         }
-
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String toString() {
             return super.toString() + " '" + mNameView.getText() + "'";

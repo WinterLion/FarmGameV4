@@ -30,6 +30,9 @@ public class ItemDetailFragment extends Fragment {
         // Required empty public constructor
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -37,6 +40,9 @@ public class ItemDetailFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_item_detail, container, false);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onStart() {
         super.onStart();
