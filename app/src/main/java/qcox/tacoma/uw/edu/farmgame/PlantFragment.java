@@ -46,7 +46,7 @@ public class PlantFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment PlantFragment.
      */
-    // TODO: Rename and change types and number of parameters
+
     public static PlantFragment newInstance(String param1, String param2) {
         PlantFragment fragment = new PlantFragment();
         Bundle args = new Bundle();
@@ -72,7 +72,6 @@ public class PlantFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_plant, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -107,7 +106,6 @@ public class PlantFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument typeOfCrops and name
         void onFragmentInteraction(Uri uri);
     }
 }
