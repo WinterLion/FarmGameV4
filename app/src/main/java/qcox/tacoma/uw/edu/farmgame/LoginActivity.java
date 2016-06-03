@@ -39,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
             = "http://cssgate.insttech.washington.edu/~_450atm17/james.php?cmd=users";
     private Users mUsers;
     private SharedPreferences mSharedPreferences;
+    public static int logInCount = 0;//use to fix rotate losing game states bug
 
     /**
      * create activity and perform log in function
@@ -48,12 +49,14 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        logInCount++;//use to fix rotate losing game states bug
 
         mSharedPreferences = getSharedPreferences(getString(R.string.LOGIN_PREFS), Context.MODE_PRIVATE);
         Boolean loggedinBoolean = mSharedPreferences.getBoolean(getString(R.string.LOGGEDIN), false);
         if (loggedinBoolean){
-            mSharedPreferences.getString("email", "");
+            String currentUser = mSharedPreferences.getString(getString(R.string.SharedPreference_currentUser), "NoCurrentUser");
+            GameValues.mUsername = currentUser;
+            Log.i("SP currentuser: ", currentUser);
         }
 
         final EditText editText_username = (EditText) findViewById(R.id.editText_username);
@@ -135,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
             outputStreamWriter.write("email = " + username + ";");
             outputStreamWriter.write("password = " + password);
             outputStreamWriter.close();
-            Toast.makeText(this,"Stored in File Successfully!", Toast.LENGTH_LONG).show();
+//            Toast.makeText(this,"Stored in File Successfully!", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -147,7 +150,9 @@ public class LoginActivity extends AppCompatActivity {
 
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         String s = getString(R.string.LOGGEDIN);
+        String currentUser = getString(R.string.SharedPreference_currentUser);
         editor.putBoolean(s, true);
+        editor.putString(currentUser, username);
         editor.commit();
     }
     /**

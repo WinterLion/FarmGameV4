@@ -40,6 +40,7 @@
 
     <string name="LOGIN_PREFS">farmgame.PREFS</string>
     <string name="LOGGEDIN">login</string>
+    <string name="SharedPreference_currentUser">SharedPreference_currentUser</string>
     <string name="LOGIN_FILE">farmgame.LOGIN_FILE</string>
     <string name="action_logout">log out</string>
     <string name="action_load">load</string>
@@ -48,5 +49,26 @@
     <string name="send_email">email friends</string>
     <string name="pleaseEnterAnEmail">Please enter your friend\'s email to share your high score:</string>
     <string name="emailExample">example@uw.edu</string>
+    <string name="help_button">Help</string>
+    <string name="parts_of_main_screen">Main Screen:\n
+1:  Level-this is your current level. You level-up automatically when you gain experience.\n
+2:  Money-this is how much money you currently have. You can sell crops and use money to buy crops in the Silo/Shop.\n
+3:  Experience-this is how much experience you currently have. You gain experience by harvesting crops.\n
+4:  Fields-these are the fields you can plant crops in.  You gain more by leveling up.</string>
+    <string name="getting_started">Getting Started:\n
+If this is your first time playing you will only have 3 fields.  You also have 0 money but don\'t despair,
+        you have enough wheat to plant one of your fields.  You click on one of the fields and the seed
+        selector will appear.  The seed selector will show the seeds you have in your inventory and how many
+        of each you have.  When you click on the seed you would like to have planted, it begins to grow in the
+        field that you had selected.  Once the crop is done growing, it will say \"Ready!\" and all you have to
+        do to harvest it is click on it.  When you harvest, several things are happening, first, you get at
+        least 1 and at most 3 seeds back.  Second, your experience goes up.  Your experience increases based
+        on the type of crop you harvested.  When your experience points get beyond 10 points, you level up and
+        your experience points are docked 10 points.  When you level up you gain 1 extra farm field for each
+        level.  After you have grown enough wheat you can click on the Silo/Shop button where you can see a
+        full list of all crops and how many you have of each.  Since you don\'t have any money yet, you need
+        to click on the wheat crop which you should now have several of.  Sell some of your wheat (best to
+        keep some just in case) and now you have some money to buy a different type of crop.  Now you know
+        the basics.  Good Luck!</string>
 
 </resources>

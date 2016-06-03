@@ -23,10 +23,10 @@ public class Config {
 
     final public static String FARM_GAME_LOGCAT = "Farm Game";
 
-//    final public static int WHEATMUTURETIME = 4001; //wheat muture time.
-//    final public static int CORNMUTURETIME = 6001;//corn muture time
-//    final public static int POTATOMUTURETIME = 10001;//potato muture time
-//    final public static int STRAWBERRYMUTURETIME = 20001;//strawberry muture time
+    final public static int WHEATMUTURETIME = 4001; //wheat muture time.
+    final public static int CORNMUTURETIME = 6001;//corn muture time
+    final public static int POTATOMUTURETIME = 10001;//potato muture time
+    final public static int STRAWBERRYMUTURETIME = 20001;//strawberry muture time
 //    final public static int WHEATEXP = 1;//wheat experience when harvest one
 //    final public static int CORNEXP = 2;//corn experience when harvest one
 //    final public static int POTATOEXP = 3;//potato experience when harvest one
@@ -36,10 +36,10 @@ public class Config {
 //    final public static int POTATOMONEY = 3;//potato money when harvest one
 //    final public static int STRAWBERRYMONEY = 4;//strawberry money when harvest one
 
-//    final public static String WHEAT = "Wheat";
-//    final public static String CORN = "Corn";
-//    final public static String POTATO = "Potato";
-//    final public static String STRAWBERRY = "Strawberry";
+    final public static String WHEAT = "Wheat";
+    final public static String CORN = "Corn";
+    final public static String POTATO = "Potato";
+    final public static String STRAWBERRY = "Strawberry";
     final public static String FIELD = "field";
 //    final public static String[] INITIAL_PLANT_NAMES = {"Potato", "Corn", "Wheat", "Strawberry"};
 //    final public static int[] INITIAL_PLANT_AMOUNTS = {5, 5, 5, 5};
