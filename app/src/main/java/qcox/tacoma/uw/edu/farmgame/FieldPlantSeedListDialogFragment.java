@@ -22,9 +22,10 @@ import qcox.tacoma.uw.edu.farmgame.data.GameValues;
 import qcox.tacoma.uw.edu.farmgame.items.PlantItems;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link FieldPlantSeedListDialogFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * This fragment is used to display a list of options when the user wants to plant a seed in the field
+ * @author James, Quinn
+ * @version 1.0
+ * @since 2016-5-4
  */
 public class FieldPlantSeedListDialogFragment extends DialogFragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -41,27 +42,17 @@ public class FieldPlantSeedListDialogFragment extends DialogFragment {
     private long id;
 
 
+    /**
+     * empty constructor
+     */
     public FieldPlantSeedListDialogFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ListDialogFragment.
-     */
-    public static FieldPlantSeedListDialogFragment newInstance(String param1, String param2) {
-        FieldPlantSeedListDialogFragment fragment = new FieldPlantSeedListDialogFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +69,12 @@ public class FieldPlantSeedListDialogFragment extends DialogFragment {
 //        textView.setText(R.string.hello_blank_fragment);
 //        return textView;
 //    }
+
+    /**
+     * create dialog to display a list of seeds to the user
+     * @param savedInstanceState
+     * @return Dialog
+     */
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -116,20 +113,6 @@ public class FieldPlantSeedListDialogFragment extends DialogFragment {
                     }
                 });
 
-
-//        builder.setTitle(R.string.plant_a_seed)
-//                .setItems(R.array.array_crops, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        // The 'which' argument contains the index position
-//                        // of the selected item
-//                        Resources res = getActivity().getResources();
-//                        String[] crops = res.getStringArray(R.array.array_crops);
-//
-//                        //talk to FarmFragment by using FarmActivity as a mCommunicater
-//                        mCommunicater = (Communicater) getActivity();
-//                        mCommunicater.plantSeed(crops[which]);
-//                    }
-//                });
         return builder.create();
     }
 }

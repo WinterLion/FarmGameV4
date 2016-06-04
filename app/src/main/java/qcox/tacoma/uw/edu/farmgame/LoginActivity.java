@@ -26,9 +26,8 @@ import java.util.List;
 
 import qcox.tacoma.uw.edu.farmgame.data.GameValues;
 import qcox.tacoma.uw.edu.farmgame.data.PlayerValues;
-import com.facebook.FacebookSdk;
 /**
- * User has to log in to continue to play
+ * User has to log in to play
  * @author james
  * @version 1.0
  * @since 2016-5-4
@@ -42,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     public static int logInCount = 0;//use to fix rotate losing game states bug
 
     /**
-     * create activity and perform log in function
+     * create activity and perform log in function, saving the user information to shared preference
      * @param savedInstanceState
      */
     @Override
@@ -125,6 +124,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
+
+    /**
+     * store the username and password to shared preference
+     * @param username
+     * @param password
+     */
     private void storeInSharedPreference(String username, String password) {
 //        ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 //

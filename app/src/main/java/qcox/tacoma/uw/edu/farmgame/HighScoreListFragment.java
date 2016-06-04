@@ -45,15 +45,6 @@ public class HighScoreListFragment extends Fragment {
     public HighScoreListFragment() {
     }
 
-//    @SuppressWarnings("unused")
-//    public static HighScoreListFragment newInstance(int columnCount) {
-//        HighScoreListFragment fragment = new HighScoreListFragment();
-//        Bundle args = new Bundle();
-//        args.putInt(ARG_COLUMN_COUNT, columnCount);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-
     /**
      * {@inheritDoc}
      * @param savedInstanceState

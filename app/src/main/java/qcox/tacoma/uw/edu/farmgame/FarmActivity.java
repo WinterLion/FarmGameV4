@@ -73,7 +73,10 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
 //    static Map<String, Integer> mInventory ;
 
 
-
+    /**
+     * To save the farm states
+     * @param savedInstanceState
+     */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState){
         savedInstanceState.putParcelableArrayList("field_arraylist", BaseAdapterHelper_farmField.field_arraylist);
@@ -164,7 +167,6 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
 //                    mutureTime = GameValues.getPlantItem(typeOfCrops).growTime;
 
 
-
                     //crop is planted and read to harvest
                     if (System.currentTimeMillis() - systemTime >= mutureTime){
                         systemTime = 0;
@@ -181,6 +183,10 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * also used to testing where to save game states.
+     */
     @Override
     public void onStart(){
         Log.i("lifecycle onStart:", "onStart");
@@ -188,6 +194,10 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
 
     }
 
+    /**
+     * reload game states
+     * @param savedInstanceState
+     */
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState){
         super.onRestoreInstanceState(savedInstanceState);
@@ -200,8 +210,9 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         }
     }
 
-
-    //this checks that the latest player values are loaded
+    /**
+     * this checks that the latest player values are loaded
+     */
     private void getLatestPlayerValues(){
         //first make sure we know who the user is
         if (GameValues.mUsername == null) {
@@ -234,6 +245,11 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
     }
 
 
+    /**
+     * create action bar menu
+     * @param menu
+     * @return ture if the menu is created
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -241,6 +257,11 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         return true;
     }
 
+    /**
+     * click on the action bar to log out and send email
+     * @param item
+     * @return ture if the action is acted
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -358,28 +379,28 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         transaction.commit();
     }
 
-    private void getServerDatabasePlayerValues(String theUser){
-       // PlayerValuesDB theTask = new PlayerValuesDB();
-        //theTask.UpdateUserMoney(this, GameValues.getCurrentPlayerValues().getMoney());
-    }
+//    private void getServerDatabasePlayerValues(String theUser){
+//       // PlayerValuesDB theTask = new PlayerValuesDB();
+//        //theTask.UpdateUserMoney(this, GameValues.getCurrentPlayerValues().getMoney());
+//    }
 
-    public void saveToServer(){
-        PlayerValuesDB theTask = new PlayerValuesDB();
-        theTask.UpdatePlayerValuesServer(this, GameValues.getCurrentPlayerValues().getUserName(),
-                GameValues.getCurrentPlayerValues().getMoney(), GameValues.getCurrentPlayerValues().getLevel(),
-                GameValues.getCurrentPlayerValues().getExp(), GameValues.getCurrentPlayerValues().mScore);
-        Iterator iterator = GameValues.getCurrentPlayerValues().getItemMap().entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry map_values = (Map.Entry)iterator.next();
-            theTask.UpdateItemServer(this, GameValues.mUsername, (String)map_values.getKey(), (Integer)map_values.getValue());
-        }
-    }
-
-    public void loadFromServer(){
-        PlayerValuesDB theTask = new PlayerValuesDB();
-        theTask.GetPlayerValuesServer(this, GameValues.mUsername);
-        theTask.GetItemServer(this, GameValues.mUsername, "");
-    }
+//    public void saveToServer(){
+//        PlayerValuesDB theTask = new PlayerValuesDB();
+//        theTask.UpdatePlayerValuesServer(this, GameValues.getCurrentPlayerValues().getUserName(),
+//                GameValues.getCurrentPlayerValues().getMoney(), GameValues.getCurrentPlayerValues().getLevel(),
+//                GameValues.getCurrentPlayerValues().getExp(), GameValues.getCurrentPlayerValues().mScore);
+//        Iterator iterator = GameValues.getCurrentPlayerValues().getItemMap().entrySet().iterator();
+//        while (iterator.hasNext()) {
+//            Map.Entry map_values = (Map.Entry)iterator.next();
+//            theTask.UpdateItemServer(this, GameValues.mUsername, (String)map_values.getKey(), (Integer)map_values.getValue());
+//        }
+//    }
+//
+//    public void loadFromServer(){
+//        PlayerValuesDB theTask = new PlayerValuesDB();
+//        theTask.GetPlayerValuesServer(this, GameValues.mUsername);
+//        theTask.GetItemServer(this, GameValues.mUsername, "");
+//    }
 
 //    public void updateMoneyToServer(){
 //        PlayerValuesDB theTask = new PlayerValuesDB();
@@ -456,11 +477,17 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         super.onBackPressed();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onFragmentInteraction(Uri uri) {
     }
 
-    //this is when an inventory item is selected and the details need to be viewed.
+    /**
+     * {@inheritDoc}
+     * this is when an inventory item is selected and the details need to be viewed.
+     */
     @Override
     public void onListFragmentInteraction(int position) {
         mPos = position;
@@ -522,7 +549,10 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
     }
 
 
-
+    /**
+     * when player click the item in FieldPlanSeedListDialogFragment, this method it called to set the timer and picture in the field
+     * @param seed
+     */
     @Override
     public void plantSeed(String seed) {
         Log.i("plantSeed called ","test");
@@ -575,6 +605,11 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         }
     }
 
+    /**
+     * update money and experience when the user harvest a crop
+     * @param typeOfCrops
+     * @return ture if level up, false is not level up
+     */
     public boolean updateMoneyExpHarvest(String typeOfCrops){
         Log.i("updateMoney called ","test");
         if (GameValues.hasPlantItem(typeOfCrops)){
@@ -593,6 +628,9 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         return checkLevelUp();
     }
 
+    /**
+     * update the level, money and experience
+     */
     private void updateTop(){
         TextView levelTextView = (TextView) findViewById(R.id.level_textView);
         TextView moneyTextView = (TextView) findViewById(R.id.money_textView);
@@ -602,10 +640,17 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         expTextView.setText("Exp: "+ GameValues.getCurrentPlayerValues().getExp());
     }
 
+    /**
+     * save the players' value to SQLite
+     */
     public void saveToSQLite() {
         mySQLite.setLocalPlayerValues(GameValues.getCurrentPlayerValues());
     }
 
+    /**
+     * when user harvest a crop, check if the user gain enough experience to level up
+     * @return ture if user level up, false if user not level up
+     */
     public boolean checkLevelUp(){
         boolean answer = false;
 //        TextView levelTextView = (TextView) findViewById(R.id.level_textView);
@@ -657,7 +702,6 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
 
     /**
      * Continue animation of the crops since new adater is created and all previous animation is gone.
-     *
      */
     public void levelUpNewAdapterAnimation() {
         Log.i("Animation called ","test");
@@ -712,6 +756,10 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
                 .commit();
     }
 
+    /**
+     * calculate highscore
+     * @return int highscore
+     */
     public int calculateHighScore(){
         int money = GameValues.getCurrentPlayerValues().getMoney();
         int level = GameValues.getCurrentPlayerValues().getLevel();
@@ -739,14 +787,23 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         return sb.toString();
     }
 
+    /**
+     * This is a private class for updating highscore to remote database
+     */
     private class AddHighScoreTask extends AsyncTask<String, Void, String> {
 
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected String doInBackground(String... urls) {
             String response = "";
@@ -806,11 +863,19 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         }
     }
 
+    /**
+     * add highscore to database
+     * @param url
+     */
     public void addHighScore(String url){
         AddHighScoreTask task = new AddHighScoreTask();
         task.execute(new String[]{url.toString()});
     }
 
+    /**
+     * {@inheritDoc}
+     * save user' game states to SQLite
+     */
     @Override
     protected void onStop() {
         Log.i("lifecycle onStop:", "onStop");
@@ -827,28 +892,46 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         mySQLite.saveSQLiteFields(fieldsObject);
 
     }
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onDestroy() {
         Log.i("lifecycle onDestroy:", "onDestroy");
         super.onDestroy();
 
     }
+    /**
+     * {@inheritDoc}
+     * also for learning the life cycle
+     */
     @Override
     protected void onPause() {
         Log.i("lifecycle onPause:", "onPause");
         super.onPause();
     }
+    /**
+     * {@inheritDoc}
+     * also for learning the life cycle
+     */
     @Override
     protected void onResume() {
         Log.i("lifecycle onResume:", "onResume");
         super.onResume();
     }
+    /**
+     * {@inheritDoc}
+     * also for learning the life cycle
+     */
     @Override
     protected void onRestart() {
         Log.i("lifecycle onRestart:", "onRestart");
         super.onRestart();
     }
-
+    /**
+     * {@inheritDoc}
+     * also for learning the life cycle
+     */
     @Override
     public void onAttachFragment(Fragment fragment) {
         Log.i("lifecycle onAttachFrag:", "onAttachFragment");

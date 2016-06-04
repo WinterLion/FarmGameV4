@@ -5,7 +5,11 @@ import android.view.View;
 import android.widget.AdapterView;
 
 /**
- * Created by james on 5/18/2016.
+ * This is used to communicate between FieldPlantSeedListDialogFragment and FarmFragment
+ * by letting FarmActivity implement this interface.
+ * @author James, Quinn
+ * @version 1.0
+ * @since 2016-5-4
  */
 public interface Communicater {
     void plantSeed (String seed);

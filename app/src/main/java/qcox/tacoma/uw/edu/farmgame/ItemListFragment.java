@@ -48,15 +48,18 @@ public class ItemListFragment extends Fragment {
      */
     public ItemListFragment() {
     }
+//
+//    public static ItemListFragment newInstance(int columnCount) {
+//        ItemListFragment fragment = new ItemListFragment();
+//        Bundle args = new Bundle();
+//        args.putInt(ARG_COLUMN_COUNT, columnCount);
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
-    public static ItemListFragment newInstance(int columnCount) {
-        ItemListFragment fragment = new ItemListFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +69,9 @@ public class ItemListFragment extends Fragment {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -90,6 +96,9 @@ public class ItemListFragment extends Fragment {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -101,6 +110,9 @@ public class ItemListFragment extends Fragment {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -151,6 +163,9 @@ public class ItemListFragment extends Fragment {
             }
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected String doInBackground(String... urls) {
             String response = "";

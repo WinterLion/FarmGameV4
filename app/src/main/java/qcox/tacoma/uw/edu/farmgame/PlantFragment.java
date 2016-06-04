@@ -34,6 +34,10 @@ public class PlantFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    /**
+     * empty constructor
+     */
+
     public PlantFragment() {
         // Required empty public constructor
     }
@@ -56,6 +60,9 @@ public class PlantFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +72,9 @@ public class PlantFragment extends Fragment {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -72,12 +82,10 @@ public class PlantFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_plant, container, false);
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -89,6 +97,9 @@ public class PlantFragment extends Fragment {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onDetach() {
         super.onDetach();
