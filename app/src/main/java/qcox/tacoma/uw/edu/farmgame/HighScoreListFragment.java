@@ -101,6 +101,8 @@ public class HighScoreListFragment extends Fragment {
         }
     }
 
+
+
     /**
      * {@inheritDoc}
      * deteach OnListFragmentInteractionListener
