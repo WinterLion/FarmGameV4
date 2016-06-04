@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         logInCount++;//use to fix rotate losing game states bug
-
+        FarmActivity.currentFragment = "FarmFragment";
         mSharedPreferences = getSharedPreferences(getString(R.string.LOGIN_PREFS), Context.MODE_PRIVATE);
         Boolean loggedinBoolean = mSharedPreferences.getBoolean(getString(R.string.LOGGEDIN), false);
         if (loggedinBoolean){

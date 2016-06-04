@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -59,6 +60,7 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
     public static BaseAdapterHelper_farmField mAdapter;
     Bundle myBundle;
     SQLiteFarmGame mySQLite;
+    public static String currentFragment;
 
     //use to fix double click bug
     int levelUpPosition;
@@ -106,10 +108,32 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         Log.i("GV currentuser: ", GameValues.mUsername);
         Log.i("currentuser: ", GameValues.getCurrentPlayerValues().getUserName());
         if (findViewById(R.id.fragment_container)!= null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new FarmFragment())
-                    .addToBackStack(null)
-                    .commit();
+            if (currentFragment.equals("FarmFragment")){
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new FarmFragment(), "FarmFragment")
+                        .addToBackStack(null)
+                        .commit();
+            }
+            if (currentFragment.equals("HelpFragment")){
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new HelpFragment(), "HelpFragment")
+                        .addToBackStack(null)
+                        .commit();
+
+            }
+            if (currentFragment.equals("HighScoreListFragment()")){
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new HighScoreListFragment(), "HighScoreListFragment")
+                        .addToBackStack(null)
+                        .commit();
+            }
+            if (currentFragment.equals("ItemListFragment()")){
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new ItemListFragment(), "ItemListFragment()")
+                        .addToBackStack(null)
+                        .commit();
+            }
+
 
         }
 
@@ -183,6 +207,52 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        HelpFragment helpFragment = (HelpFragment) fragmentManager.findFragmentByTag("HelpFragment");
+        if (helpFragment != null && helpFragment.isVisible()) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, new FarmFragment(), "FarmFragment")
+                    .addToBackStack(null)
+                    .commit();
+            currentFragment = "FarmFragment";
+        }
+
+        HighScoreListFragment highScoreListFragment = (HighScoreListFragment) fragmentManager.findFragmentByTag("HighScoreListFragment");
+        if (highScoreListFragment != null && highScoreListFragment.isVisible()) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, new FarmFragment(), "FarmFragment")
+                    .addToBackStack(null)
+                    .commit();
+            currentFragment = "FarmFragment";
+        }
+        ItemListFragment itemListFragment = (ItemListFragment) fragmentManager.findFragmentByTag("ItemListFragment");
+        if (itemListFragment != null && itemListFragment.isVisible()) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, new FarmFragment(), "FarmFragment")
+                    .addToBackStack(null)
+                    .commit();
+            currentFragment = "FarmFragment";
+        }
+        ItemDetailFragment itemDetailFragment = (ItemDetailFragment) fragmentManager.findFragmentByTag("ItemDetailFragment");
+        if (itemDetailFragment != null && itemDetailFragment.isVisible()) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, new ItemListFragment(), "ItemListFragment")
+                    .addToBackStack(null)
+                    .commit();
+            currentFragment = "ItemListFragment";
+        }
+        HighscoreDetailFragment highscoreDetailFragment = (HighscoreDetailFragment) fragmentManager.findFragmentByTag("HighscoreDetailFragment");
+        if (highscoreDetailFragment != null && highscoreDetailFragment.isVisible()) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, new HighScoreListFragment(), "HighScoreListFragment")
+                    .addToBackStack(null)
+                    .commit();
+            currentFragment = "HighScoreListFragment";
+        }
+
+    }
     /**
      * {@inheritDoc}
      * also used to testing where to save game states.
@@ -332,12 +402,13 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
      * @param v the view that called the method (the button)
      */
     public void viewHelp(View v) {
+        currentFragment = "HelpFragment";
         HelpFragment newFragment = new HelpFragment();
         Bundle args = new Bundle();
         newFragment.setArguments(args);
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, newFragment)
+                .replace(R.id.fragment_container, newFragment, "HelpFragment")
                 .addToBackStack(null);
 
         // Commit the transaction
@@ -349,13 +420,14 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
      * @param v the view that called the method (the button)
      */
     public void viewHighScores(View v) {
+        currentFragment = "HighScoreListFragment";
         addHighScore(buildHighScoreURL());
         HighScoreListFragment itemFragment = new HighScoreListFragment();
         Bundle args = new Bundle();
         itemFragment.setArguments(args);
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, itemFragment)
+                .replace(R.id.fragment_container, itemFragment,"HighScoreListFragment")
                 .addToBackStack(null);
 
         // Commit the transaction
@@ -367,12 +439,13 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
      * @param v the view that called the method (the button)
      */
     public void startSiloList(View v) {
+        currentFragment = "ItemListFragment";
         ItemListFragment itemFragment = new ItemListFragment();
         Bundle args = new Bundle();
         itemFragment.setArguments(args);
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, itemFragment)
+                .replace(R.id.fragment_container, itemFragment, "ItemListFragment")
                 .addToBackStack(null);
 
         // Commit the transaction
@@ -497,7 +570,7 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         itemDetailFragment.setArguments(args);
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, itemDetailFragment)
+                .replace(R.id.fragment_container, itemDetailFragment, "ItemDetailFragment")
                 .addToBackStack(null);
         // Commit the transaction
         transaction.commit();
@@ -751,7 +824,7 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         highscoreDetailFragment.setArguments(args);
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, highscoreDetailFragment)
+                .replace(R.id.fragment_container, highscoreDetailFragment, "HighscoreDetailFragment")
                 .addToBackStack(null)
                 .commit();
     }
@@ -937,4 +1010,6 @@ public class FarmActivity extends AppCompatActivity implements FarmFragment.OnFr
         Log.i("lifecycle onAttachFrag:", "onAttachFragment");
         super.onAttachFragment(fragment);
     }
+
+
 }
