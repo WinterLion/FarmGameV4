@@ -47,6 +47,7 @@ public class HighscoreDetailFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_highscore_detail, container, false);
         mUsernameTextView = (TextView) view.findViewById(R.id.highScoreFragment_username);
         mHighScoreTextView = (TextView) view.findViewById(R.id.highScoreFragment_highscore);
+        this.setRetainInstance(true);
 //        mLevelTextView = (TextView) view.findViewById(R.id.highScoreFragment_level);
 //        mMoneyTextView = (TextView) view.findViewById(R.id.highScoreFragment_money);
 

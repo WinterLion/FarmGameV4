@@ -21,6 +21,8 @@ public class HelpFragment extends Fragment {
      * empty constructor
      */
     public HelpFragment() {
+        super();
+        this.setRetainInstance(true);
         // Required empty public constructor
     }
 

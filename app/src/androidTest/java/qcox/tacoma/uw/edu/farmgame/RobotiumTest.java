@@ -8,8 +8,6 @@ import com.robotium.solo.Solo;
 import java.util.Random;
 
 /**
- *
- *
  * Created by Cox Family on 5/31/2016.
  */
 public class RobotiumTest extends
@@ -55,12 +53,18 @@ public class RobotiumTest extends
         solo.clickOnButton("Log In");
     }
 
+    /**
+     * Test app started.
+     */
     public void testAppStarted() {
         setUpLoginPage();
         boolean activityLoaded = solo.searchText("Don't have an account?");
         assertTrue("Login activity loaded", activityLoaded);
     }
 
+    /**
+     * Test navigate to registration.
+     */
     public void testNavigateToRegistration() {
         setUpLoginPage();
         solo.clickOnButton("Go to Register");
@@ -68,6 +72,9 @@ public class RobotiumTest extends
         assertTrue("Navigate To Registration worked!", worked);
     }
 
+    /**
+     * Test registration.
+     */
     public void testRegistration() {
         setUpLoginPage();
         solo.clickOnButton("Go to Register");
@@ -90,6 +97,9 @@ public class RobotiumTest extends
         assertTrue("Sign in after registration worked!", worked);
     }
 
+    /**
+     * Test login.
+     */
     public void testLogin(){
         setUpLoginPage();
         solo.enterText(0, mUsername);
@@ -99,6 +109,9 @@ public class RobotiumTest extends
         assertTrue("Sign in worked!", worked);
     }
 
+    /**
+     * Test silo.
+     */
     public void testSilo(){
         setUpMainPage();
         solo.clickOnButton("Silo/Shop");
@@ -106,6 +119,9 @@ public class RobotiumTest extends
         assertTrue("Navigate to Silo worked!", worked);
     }
 
+    /**
+     * Test item detail.
+     */
     public void testItemDetail(){
         setUpMainPage();
         solo.clickOnButton("Silo/Shop");
@@ -114,6 +130,9 @@ public class RobotiumTest extends
         assertTrue("Item details worked!", worked);
     }
 
+    /**
+     * Test back to silo.
+     */
     public void testBackToSilo(){
         setUpMainPage();
         solo.clickOnButton("Silo/Shop");
@@ -123,6 +142,9 @@ public class RobotiumTest extends
         assertTrue("Navigate back to Silo worked!", worked);
     }
 
+    /**
+     * Test back to main.
+     */
     public void testBackToMain(){
         setUpMainPage();
         solo.clickOnButton("Silo/Shop");
@@ -133,6 +155,9 @@ public class RobotiumTest extends
         assertTrue("from silo back to main worked!", worked);
     }
 
+    /**
+     * Test help.
+     */
     public void testHelp(){
         setUpMainPage();
         solo.clickOnButton("Help");
@@ -141,6 +166,9 @@ public class RobotiumTest extends
         solo.goBack();
     }
 
+    /**
+     * Test high score.
+     */
     public void testHighScore(){
         setUpMainPage();
         solo.clickOnButton("HighScore");
@@ -149,9 +177,11 @@ public class RobotiumTest extends
         solo.goBack();
     }
 
+    /**
+     * Test logout.
+     */
     public void testLogout(){
         setUpMainPage();
-       // solo.clickOnButton("log out");
         solo.clickOnMenuItem("log out");
         solo.enterText(0, mUsername);
         solo.enterText(1, mPassword);
@@ -160,6 +190,9 @@ public class RobotiumTest extends
         assertTrue("Logout and Sign in worked!", worked);
     }
 
+    /**
+     * Test email friend.
+     */
     public void testEmailFriend(){
         setUpMainPage();
         solo.clickOnMenuItem("email friends");

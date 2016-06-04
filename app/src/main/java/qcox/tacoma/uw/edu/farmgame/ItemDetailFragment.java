@@ -68,6 +68,8 @@ public class ItemDetailFragment extends Fragment {
         if (aPlantItem.imageResourceIndex != -1) {
             ImageView itemImageView = (ImageView) getActivity().findViewById(R.id.item_detail_image);
             itemImageView.setImageResource(aPlantItem.imageResourceIndex);
+            //getActivity().findViewById(R.id.fragment_item_detail).setBackground(itemImageView.getDrawable());
+            getActivity().findViewById(R.id.fragment_item_detail).setBackgroundDrawable(itemImageView.getDrawable());
         }
         TextView moneyTextView = (TextView) getActivity().findViewById(R.id.item_detail_money_amount);
         int money = GameValues.getCurrentPlayerValues().getMoney();
